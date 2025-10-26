@@ -1,28 +1,36 @@
-# Angular specific
-/dist/
-/out-tsc/
-/tmp/
-/coverage/
-/e2e/test-output/
-/.angular/
-.angular/
+# Archivos y carpetas generados por Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
+# Archivos temporales de Windows
+*.tmp
+*~
 
-# Environment files
-/.env
+# Archivos de Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
+# Archivos de entornos virtuales (común en desarrollo)
+venv/
+ENV/
+.env
+.venv
+env/
 
-# TypeScript cache
-*.tsbuildinfo
-
-# Logs
+# Archivos de logs y salidas
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.DS_Store
+
+# Archivos de compilación (si aplica)
+dist/
+build/
+out/
