@@ -22,6 +22,8 @@ ENV/
 .env
 .venv
 env/
+node_modules
+package-lock.json
 
 # Archivos de logs y salidas
 *.log
@@ -31,6 +33,7 @@ yarn-error.log*
 .DS_Store
 
 # Archivos de compilación (si aplica)
+# public/dist/
 # dist/
-build/
+# build/
 out/

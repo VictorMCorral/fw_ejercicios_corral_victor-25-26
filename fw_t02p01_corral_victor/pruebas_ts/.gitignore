@@ -1,0 +1,55 @@
+# =========================
+# Windows
+# =========================
+# Archivos ocultos de Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# =========================
+# Node / TypeScript
+# =========================
+# Dependencias de Node
+node_modules/
+# Salida de compilación de TypeScript
+dist/
+build/
+lib/
+# Archivos de cache de npm
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Archivos temporales de logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de cobertura de pruebas
+coverage/
+*.lcov
+
+# Archivos de compilación de TypeScript
+*.tsbuildinfo
+
+# =========================
+# Visual Studio Code
+# =========================
+.vscode/
+*.code-workspace
+
+# =========================
+# Otros archivos de sistema
+# =========================
+.DS_Store
+*.swp
+*.swo
+*.tmp
