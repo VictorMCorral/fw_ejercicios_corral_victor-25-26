@@ -1,0 +1,7 @@
+.main-content {
+    padding-top: 120px;
+    /* altura del header */
+    padding-bottom: 70px;
+    /* altura del footer */
+    min-height: calc(100vh - 150px);
+}

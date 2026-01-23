@@ -5,15 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:pug": "pug src --out public",
-    "watch:pug": "pug src --out public --watch --pretty"
+    "build:pug": "pug src/compile --out public",
+    "watch:pug": "pug src/compile --out public --watch --pretty",
+    "build:ts": "tsc",
+    "watch:ts": "tsc --watch",
+    "dev": "concurrently \"npm run watch:pug\" \"npm run watch:ts\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "pug": "^3.0.3",
-    "pug-cli": "^1.0.0-alpha6"
+    "pug-cli": "^1.0.0-alpha6",
+    "typescript": "^5.9.3"
   }
 }

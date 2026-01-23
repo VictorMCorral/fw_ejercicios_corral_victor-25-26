@@ -2,83 +2,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recetario</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mis_estilos.css">
 </head>
-
 <body>
-    <header>
-        <div class="px-3 py-2 text-bg-dark border-bottom">
-            <div class="container">
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"> <a
-                        href="/"
-                        class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-                        <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                            <use xlink:href="#bootstrap"></use>
-                        </svg> </a>
-                    <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-                        <li> <a href="#" class="nav-link text-secondary"> <svg class="bi d-block mx-auto mb-1"
-                                    width="24" height="24" aria-hidden="true">
-                                    <use xlink:href="#home"></use>
-                                </svg>
-                                Home
-                            </a> </li>
-                        <li> <a href="#" class="nav-link text-white"> <svg class="bi d-block mx-auto mb-1" width="24"
-                                    height="24" aria-hidden="true">
-                                    <use xlink:href="#speedometer2"></use>
-                                </svg>
-                                Dashboard
-                            </a> </li>
-                        <li> <a href="#" class="nav-link text-white"> <svg class="bi d-block mx-auto mb-1" width="24"
-                                    height="24" aria-hidden="true">
-                                    <use xlink:href="#table"></use>
-                                </svg>
-                                Orders
-                            </a> </li>
-                        <li> <a href="#" class="nav-link text-white"> <svg class="bi d-block mx-auto mb-1" width="24"
-                                    height="24" aria-hidden="true">
-                                    <use xlink:href="#grid"></use>
-                                </svg>
-                                Products
-                            </a> </li>
-                        <li> <a href="#" class="nav-link text-white"> <svg class="bi d-block mx-auto mb-1" width="24"
-                                    height="24" aria-hidden="true">
-                                    <use xlink:href="#people-circle"></use>
-                                </svg>
-                                Customers
-                            </a> </li>
-                    </ul>
+     <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3 fixed-top">
+        <div class="container">
+
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="img/logo.png" alt="Logo" class="img-fluid me-2" style="max-height:80px;">
+                <span class="fw-bold">Second Breakfast</span>
+            </a>
+
+            <!-- Botón móvil -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menú -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Customers</a>
+                    </li>
+                </ul>
+
+                <!-- Buscador -->
+                <form class="d-flex me-3">
+                    <input class="form-control form-control-sm" type="search" placeholder="Buscar...">
+                </form>
+
+                <!-- Botones -->
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#miModal">
+                        Usuario
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="px-3 py-2 border-bottom mb-3">
-            <div class="container d-flex flex-wrap justify-content-center">
-                <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search"> <input type="search"
-                        class="form-control" placeholder="Search..." aria-label="Search"> </form>
-                <div class="text-end"> <button type="button" class="btn btn-light text-dark me-2">Login</button> <button
-                        type="button" class="btn btn-primary">Sign-up</button> </div>
+    </nav>
+</header>
+  <main class="main-content"> 
+    <div class="container py-4"> 
+      <h1>Buscador</h1>
+      <select class="form-select" id="Categorias">
+        <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
+      </select>
+    </div>
+    <hr/>
+    <div class="container py-4">
+      <h3>Ocho aleatorias</h3>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias"></div>
+    </div>
+    <hr/>
+    <div class="container py-4"> 
+      <h3>Favoritos</h3>
+      <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4" id="favoritos"></div>
+    </div><!-- Modal -->
+<div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="miModalLabel">Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- PESTAÑAS-->
+            <div class="modal-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="modalTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="crear-tab" data-bs-toggle="tab" data-bs-target="#crear"
+                            type="button" role="tab" aria-controls="crear" aria-selected="true">
+                            Registrarse
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="login-tab" data-bs-toggle="tab" data-bs-target="#login"
+                            type="button" role="tab" aria-controls="login" aria-selected="false">
+                            Log in
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- CONTENIDO PESTAÑAS -->
+                <div class="tab-content pt-3" id="modalTabContent">
+                    <!-- REGISTRARSE -->
+                    <div class="tab-pane fade show active" id="crear" role="tabpanel" aria-labelledby="crear-tab">
+                        <form>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" placeholder="Ingresa tu nombre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="emailCrear" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emailCrear" placeholder="Ingresa tu email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordCrear" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="passwordCrear"
+                                    placeholder="Ingresa tu contraseña">
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordCrear" class="form-label">Repite la contraseña</label>
+                                <input type="password" class="form-control" id="passwordCrear"
+                                    placeholder="Ingresa tu contraseña">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Crear usuario</button>
+                        </form>
+                    </div>
+
+                    <!-- LOG IN -->
+                    <div class="tab-pane fade" id="login" role="tabpanel" aria-labelledby="login-tab">
+                        <form>
+                            <div class="mb-3">
+                                <label for="emailLogin" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emailLogin" placeholder="Ingresa tu email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordLogin" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="passwordLogin"
+                                    placeholder="Ingresa tu contraseña">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+</div>
+  </main><footer
+    class="d-flex flex-wrap justify-content-between align-items-center py-3 fixed-bottom bg-dark text-white shadow-lg">
 
+    <div class="col-md-4 d-flex align-items-center">
+        <a href="/" class="me-2 text-white text-decoration-none lh-1" aria-label="Home">
+            <svg class="bi" width="30" height="24" aria-hidden="true" fill="currentColor">
+                <use xlink:href="#bootstrap"></use>
+            </svg>
+        </a>
+        <span class="text-white-50">© 2025 Company, Inc</span>
+    </div>
 
-    </header>
-    <h1>ESTA FUNCIONANDO</h1>
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 d-flex align-items-center"> <a href="/"
-                class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap"> <svg
-                    class="bi" width="30" height="24" aria-hidden="true">
-                    <use xlink:href="#bootstrap"></use>
-                </svg> </a> <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span> </div>
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-            <li class="ms-3"><a class="text-body-secondary" href="#" aria-label="Instagram"><svg class="bi" width="24"
-                        height="24" aria-hidden="true">
-                        <use xlink:href="#instagram"></use>
-                    </svg></a></li>
-            <li class="ms-3"><a class="text-body-secondary" href="#" aria-label="Facebook"><svg class="bi" width="24"
-                        height="24">
-                        <use xlink:href="#facebook"></use>
-                    </svg></a></li>
-        </ul>
-    </footer>
-    <script src="/public/dist/app.js"></script>
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex mb-0">
+        <li class="ms-3">
+            <a class="text-white-50" href="#" aria-label="Instagram">
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                    <use xlink:href="#instagram"></use>
+                </svg>
+            </a>
+        </li>
+        <li class="ms-3">
+            <a class="text-white-50" href="#" aria-label="Facebook">
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                    <use xlink:href="#facebook"></use>
+                </svg>
+            </a>
+        </li>
+    </ul>
+
+</footer><script src="dist/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
