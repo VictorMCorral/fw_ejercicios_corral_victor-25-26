@@ -1,48 +1,38 @@
-import { MyMeal } from "./MyMeal.js";
-import { UserMiniMeal } from "./UserMiniMeal.js";
-
 export class ApiService {
-    private API_URL: string;
-    private API_KEY: string;
-
-    constructor(apiUrl: string, apiKey: string = '') {
-        this.API_URL = apiUrl
+    constructor(apiUrl, apiKey = '') {
+        this.API_URL = apiUrl;
         this.API_KEY = apiKey;
     }
-
     //TODO repasar los metodos
-    async getRandomMeals(): Promise<MyMeal> {
+    async getRandomMeals() {
         let url = `${this.API_URL}/${this.API_KEY}/random.php`;
         const response = await fetch(url);
         const data = await response.json();
         return this.toMyMeal(data.meals[0]);
     }
-
-    async getMealDetails(idMeal: number): Promise<MyMeal> {
+    async getMealDetails(idMeal) {
         const url = `${this.API_URL}/${this.API_KEY}/lookup.php?i=${idMeal}`;
         const response = await fetch(url);
         const data = await response.json();
         return this.toMyMeal(data.meals[0]);
     }
-
-    async getCategories(): Promise<string[]> {
+    async getCategories() {
         const url = `${this.API_URL}/${this.API_KEY}/list.php?c=list`;
         const response = await fetch(url);
         const data = await response.json();
-        const categorias: string[] = [];
+        const categorias = [];
         for (const meal of data.meals) {
             categorias.push(meal.strCategory);
         }
         return categorias;
     }
-
-    async getMealsByCategory(categoria: string): Promise<UserMiniMeal[]> {
+    async getMealsByCategory(categoria) {
         const url = `${this.API_URL}/${this.API_KEY}/filter.php?c=${encodeURIComponent(categoria)}`;
         const response = await fetch(url);
         const data = await response.json();
-        const mealsConvertidas: UserMiniMeal[] = [];
+        const mealsConvertidas = [];
         for (const apiMeal of data.meals) {
-            const mealConvertida: UserMiniMeal = {
+            const mealConvertida = {
                 idMeal: Number(apiMeal.idMeal),
                 name: apiMeal.strMeal,
                 image_small: (apiMeal.strMealThumb || '').trim()
@@ -51,8 +41,7 @@ export class ApiService {
         }
         return mealsConvertidas;
     }
-
-    private toMyMeal(apiMeal: any): MyMeal {
+    toMyMeal(apiMeal) {
         return {
             idMeal: Number(apiMeal.idMeal),
             strMeal: apiMeal.strMeal,
@@ -62,14 +51,11 @@ export class ApiService {
             ingredients: this.convertirIngredientes(apiMeal)
         };
     }
-
-    private convertirIngredientes(apiMeal: any): { name: string; measure: string }[] {
-        const ingredients: { name: string; measure: string }[] = [];
-
+    convertirIngredientes(apiMeal) {
+        const ingredients = [];
         for (let i = 1; i <= 20; i++) {
             const ingredientName = apiMeal[`strIngredient${i}`];
             const measure = apiMeal[`strMeasure${i}`];
-
             if (ingredientName && ingredientName.trim() !== '') {
                 ingredients.push({
                     name: ingredientName.trim(),
@@ -77,6 +63,7 @@ export class ApiService {
                 });
             }
         }
-        return ingredients
+        return ingredients;
     }
 }
+//# sourceMappingURL=ApiService.js.map

@@ -10,7 +10,7 @@
         <div class="container">
 
             <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <a class="navbar-brand d-flex align-items-center" href="private.html">
                 <img src="img/logo.png" alt="Logo" class="img-fluid me-2" style="max-height:80px;">
                 <span class="fw-bold">Second Breakfast</span>
             </a>
@@ -44,13 +44,6 @@
                 <form class="d-flex me-3">
                     <input class="form-control form-control-sm" type="search" placeholder="Buscar...">
                 </form>
-
-                <!-- Botones -->
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#miModal">
-                        Usuario
-                    </button>
-                </div>
             </div>
         </div>
     </nav>
@@ -63,9 +56,16 @@
       </select>
     </div>
     <hr/>
+    <div class="container py-4"> 
+      <h3>Favoritos</h3>
+      <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-4" id="favoritos"></div>
+      <!--TODO completar-->
+    </div>
+    <hr/>
     <div class="container py-4">
       <h3>Ocho aleatorias</h3>
       <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias"></div>
+      <!--TODO es necesario ya que estan las favoritas?-->
     </div><!-- Modal -->
 <div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
     <div class="modal-dialog">

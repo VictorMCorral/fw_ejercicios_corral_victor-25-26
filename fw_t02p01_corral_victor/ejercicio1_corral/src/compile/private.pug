@@ -1,0 +1,22 @@
+extends ../no_compile/layout.pug
+
+block cabecera
+    include ../no_compile/partials/cabecera_privada.html
+    
+block content 
+        main.main-content 
+            .container.py-4 
+                h1 Buscador
+                select(id="categorias").form-select
+                    option(value="" selected disabled) Todas las categorias
+            hr
+            .container.py-4 
+                h3 Favoritos
+                .row.row-cols-1.row-cols-md-3.row-cols-xl-4.g-4(id="favoritos")
+                //TODO completar
+            hr
+            .container.py-4
+                h3 Ocho aleatorias
+                .row.row-cols-1.row-cols-md-2.row-cols-xl-4.g-4(id="ochoAleatorias")
+                //TODO es necesario ya que estan las favoritas?
+            include ../no_compile/partials/usuario.html
