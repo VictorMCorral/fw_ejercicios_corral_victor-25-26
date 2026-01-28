@@ -3,7 +3,6 @@ export class ApiService {
         this.API_URL = apiUrl;
         this.API_KEY = apiKey;
     }
-    //TODO repasar los metodos
     async getRandomMeals() {
         let url = `${this.API_URL}/${this.API_KEY}/random.php`;
         const response = await fetch(url);

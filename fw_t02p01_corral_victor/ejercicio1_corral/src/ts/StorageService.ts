@@ -18,28 +18,32 @@ export class StorageService {
 
     // Nunca toca el DOM
     //TODO repasar para que son user_key_item y User_meal_key_item
+    private static USER_KEY: string = "user_";
     private static USER_KEY_ITEM: string = "user_logged_in";
     private static USER_MEAL_KEY_ITEM: string = "user_meals";
 
-    saveUser(User: User): void {
-        localStorage.setItem(`user_${User.id}`, JSON.stringify(User));
+    saveUser(user: User): void {
+        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(user));
     }
 
-    validateUser(email: string, password: string): boolean | null {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user: User = JSON.parse(userJson);
-                    if (user.email === email && user.password === password) {
-                        return true;
-                    }
-                }
-            }
+
+    validateUser(id: number, password: string): boolean {
+        const usersString = localStorage.getItem(StorageService.USER_KEY);
+        if (!usersString) return false;
+
+        try {
+            const users: User[] = JSON.parse(usersString);
+
+            // Buscar el usuario con id y contraseña coincidentes
+            const userFound = users.find(user => user.id === id && user.password === password);
+
+            return !!userFound; // true si se encontró, false si no
+        } catch (error) {
+            console.error("Error parsing users from localStorage", error);
+            return false;
         }
-        return false;
     }
+
 
     getUserByEmail(email: string): User | null {
         for (let i = 0; i < localStorage.length; i++) {
@@ -57,17 +61,43 @@ export class StorageService {
         return null;
     }
 
+    getUserById(id: number): User | null {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("user_")) {
+                const userJson = localStorage.getItem(key);
+                if (userJson) {
+                    const user: User = JSON.parse(userJson);
+                    if (user.id === id) {
+                        return user;
+                    }
+                }
+            }
+        }
+        return null;
+
+
+    }
+
+    isSessionActive(): boolean {
+        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
+        return sessionJson !== null;
+    }
+
+    clearSession(): void {
+        localStorage.removeItem(StorageService.USER_KEY_ITEM);
+    }
+
     saveUserSession(session: AuthSession): void {
         localStorage.setItem(StorageService.USER_KEY_ITEM, JSON.stringify(session));
     }
 
-    getUserSession(User : User): AuthSession | null {
+    getUserSession(): AuthSession | null {
         const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
         if (sessionJson) {
             const sessionObj = JSON.parse(sessionJson);
             const session: AuthSession = sessionObj;
-            if (session.userId === User.id)
-                return session;
+            return session;
         }
         return null;
     }

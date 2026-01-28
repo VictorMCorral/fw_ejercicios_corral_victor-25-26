@@ -8,35 +8,14 @@ import { AuthSession } from "./AuthSession.js";
 
 
 
-function completarCategorias(): void {
-    // fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
-    //     .then(respuesta => {
-    //         if (!respuesta.ok) {
-    //             throw new Error("Error al obtener los datos de las categorias")
-    //         }
-    //         return respuesta.json();
-    //     })
-    //     .then(data => {
-    //         const selectCategorias: HTMLElement | null = document.getElementById('Categorias');
-    //         if (selectCategorias !== null) {
-    //             data.categories.forEach((categoria: any) => {
-    //                 const option = document.createElement('option');
-    //                 option.value = categoria.strCategory;
-    //                 option.textContent = categoria.strCategory;
-    //                 selectCategorias.appendChild(option);
-    //             });
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error("Error al cargar las categorias:", error);
-    //     });
+function completarCategorias(categoriaSelected: string): void {
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
     apiService.getCategories()
         .then(categorias => {
             const selectCategorias: HTMLElement | null = document.getElementById('categorias');
             if (selectCategorias !== null) {
-                viewService.renderCategoryOptions(selectCategorias, categorias);
+                viewService.renderCategoryOptions(selectCategorias, categorias, categoriaSelected);
             }
         })
         .catch(error => {
@@ -46,23 +25,6 @@ function completarCategorias(): void {
 
 
 async function completarAleatorias(): Promise<void> {
-    // fetch("https://www.themealdb.com/api/json/v1/1/random.php")
-    //     .then(res => {
-    //         if (!res.ok) throw new Error("Error al obtener receta random");
-    //         return res.json();
-    //     })
-    //     .then(data => {
-    //         const contenedor = document.getElementById("ochoAleatorias");
-    //         if (!contenedor) return;
-
-    //         const recetaData = data.meals[0];
-    //         const receta = document.createElement('div');
-    //         receta.classList.add("col");
-    //         receta.innerHTML = crearCard(recetaData)
-
-    //         contenedor.appendChild(receta);
-    //     })
-    //     .catch(err => console.error(err));
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
 
@@ -87,51 +49,12 @@ async function completarAleatorias(): Promise<void> {
     }
 }
 
-function filtrarAleatorias(): void {
-    // const selectCategorias: HTMLElement | null = document.getElementById('Categorias');
-    // let categoriaFiltrada: string = "";
-    // if (selectCategorias !== null && selectCategorias instanceof HTMLSelectElement) {
-    //     categoriaFiltrada = selectCategorias.value;
-    // }
-
-    // fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoriaFiltrada}`)
-    //     .then(res => {
-    //         if (!res.ok) throw new Error("Error al obtener recetas");
-    //         return res.json();
-    //     })
-    //     .then(data => {
-    //         const contenedor = document.getElementById("ochoAleatorias") as HTMLDivElement;
-    //         if (!contenedor) return;
-    //         contenedor.innerHTML = "";
-
-    //         const aleatorios = crearOchoAleatorios(data.meals.length);
-
-    //         aleatorios.forEach(async numero => {
-    //             const mealID = data.meals[numero].idMeal;
-
-    //             try {
-    //                 const resDetalle = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealID}`);
-    //                 if (!resDetalle.ok) throw new Error("Error al obtener detalles de la receta");
-
-    //                 const detalleData = await resDetalle.json();
-    //                 const recetaCompleta: Receta = detalleData.meals[0];
-
-    //                 const recetaDiv = document.createElement('div');
-    //                 recetaDiv.classList.add("col");
-    //                 recetaDiv.innerHTML = crearCard(recetaCompleta);
-
-    //                 contenedor.appendChild(recetaDiv);
-    //             } catch (err) {
-    //                 console.error(err);
-    //             }
-    //         });
-    //     })
-    //     .catch(err => console.error(err));
+function filtrarAleatorias(categoria: string): void {
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
-    const selectCategorias: HTMLElement | null = document.getElementById('categorias');
-    let categoriaFiltrada: string = "";
-    if (selectCategorias !== null && selectCategorias instanceof HTMLSelectElement) {
+    const selectCategorias = document.getElementById('categorias') as HTMLSelectElement;
+    let categoriaFiltrada: string = categoria;
+    if (selectCategorias !== null && selectCategorias.value !== "") {
         categoriaFiltrada = selectCategorias.value;
     }
     apiService.getMealsByCategory(categoriaFiltrada)
@@ -221,22 +144,44 @@ function logearUsuario(): void {
             };
             storageService.saveUserSession(authSession);
             console.log("Sesión de autenticación creada:", authSession);
-            cargarZonaPrivada(usuarioGuardado);
+            window.location.href = "index.html";
         } else {
             console.error("Credenciales incorrectas");
         }
     }
 }
 
-function cargarZonaPrivada(usuarioGuardado: User): void {
+function logoutUsuario(): void {
+    console.log("Cerrando sesión de usuario...");
     const storageService = new StorageService();
-    const sessionGuardada = storageService.getUserSession(usuarioGuardado);
+    storageService.clearSession();
+    window.location.href = "index.html";
+}
 
-    if (sessionGuardada) {
-        window.location.href = "private.html";
-    } else {
-        console.error("No hay sesión activa");
+function saveCategory(): void {
+    const storage = new StorageService();
+    const session = storage.getUserSession() as AuthSession;
+    const user = storage.getUserById(session.userId) as User;
+    const view = new ViewService();
+    const favoritaCont = document.getElementById("categorias") as HTMLSelectElement;
+    const favoritaBtn = document.getElementById("btnGuardar") as HTMLSelectElement;
+
+    if(favoritaCont.value !== ""){
+        if (user.favoriteCategory === favoritaCont.value) {
+            console.log("Eliminando categoría");
+            delete user.favoriteCategory;
+            view.renderBtnFavorite(favoritaBtn)
+            storage.saveUser(user);
+        } else {
+            console.log("Asignando nueva categoría favorita");
+            user.favoriteCategory = favoritaCont.value; // asigna nueva categoría
+            view.renderBtnFavorite(favoritaBtn)
+            console.log(user);
+            storage.saveUser(user);
+        }
     }
+
+    //funciona
 }
 
 function cargarFavoritos(): void {
@@ -249,43 +194,61 @@ function cargarFavoritos(): void {
 
 window.addEventListener('DOMContentLoaded', () => {
     const archivo = window.location.pathname.split("/").pop();
-    if (archivo === "index.html") {
-        console.log(archivo);
-        completarCategorias();
+    const storage = new StorageService();
+    const view = new ViewService();
+    const usuarioBtn = document.getElementById("usuarioBtn") as HTMLDivElement
+    const cerrarSesionBtn = document.getElementById("cerrarSesionBtn") as HTMLDivElement
 
-        completarAleatorias();
+    if (storage.isSessionActive()) {
+        view.renderBtnSessions(cerrarSesionBtn);
+        view.renderBtnSessions(usuarioBtn);
+        const btnCerrarSesion = document.getElementById("btnCerrarSesion") as HTMLButtonElement;
+        btnCerrarSesion.addEventListener("click", logoutUsuario);
 
-        const select: HTMLElement | null = document.getElementById("categorias");
-        if (select !== null) {
-            select.addEventListener("change", filtrarAleatorias);
+        const btnSaveSession = document.getElementById("btnGuardar") as HTMLButtonElement;
+        btnSaveSession.addEventListener("click", saveCategory);
+
+        const session = storage.getUserSession() as AuthSession;
+        const user = storage.getUserById(session.userId) as User;
+        let categoria = user.favoriteCategory ?? "";
+
+        if(user.favoriteCategory){
+            const btnFavorito = document.getElementById("btnGuardar") as HTMLDivElement;
+            view.renderBtnFavorite(btnFavorito);
+            filtrarAleatorias(categoria);
+        } else {
+            completarAleatorias();
         }
+        console.log(user)
+        completarCategorias(categoria);
 
-        const formulario = document.getElementById("formCrearUsuario") as HTMLFormElement;
-        formulario.addEventListener("submit", (event) => {
-            event.preventDefault();
-            registrarUsuario();
-        });
+    } else {
+        completarCategorias("");
+        completarAleatorias();
+    }
 
-        const formularioLogin = document.getElementById("formLoginUsuario") as HTMLFormElement;
-        formularioLogin.addEventListener("submit", (event) => {
-            event.preventDefault();
-            logearUsuario();
+
+
+
+    const select: HTMLElement | null = document.getElementById("categorias");
+    if (select !== null) {
+        select.addEventListener("change", () => {
+            filtrarAleatorias("");
         });
     }
 
-    if (archivo === "private.html") {
-        console.log(archivo);
-        completarCategorias();
+    const formulario = document.getElementById("formCrearUsuario") as HTMLFormElement;
+    formulario.addEventListener("submit", (event) => {
+        event.preventDefault();
+        registrarUsuario();
+    });
 
-        completarAleatorias();
+    const formularioLogin = document.getElementById("formLoginUsuario") as HTMLFormElement;
+    formularioLogin.addEventListener("submit", (event) => {
+        event.preventDefault();
+        logearUsuario();
+    });
 
-        cargarFavoritos();
-
-        const select: HTMLElement | null = document.getElementById("categorias");
-        if (select !== null) {
-            select.addEventListener("change", filtrarAleatorias);
-        }
-    }
 });
 
 

@@ -1,8 +1,10 @@
 export class StorageService {
-    saveUser(User) {
-        localStorage.setItem(`user_${User.id}`, JSON.stringify(User));
+    saveUser(user) {
+        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(user));
     }
-    validateUser(email, password) {
+    validateUser(id, password) {
+        const users = localStorage.getItem(StorageService.USER_KEY);
+        //TODO seguimos por aqui
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key && key.startsWith("user_")) {
@@ -32,16 +34,37 @@ export class StorageService {
         }
         return null;
     }
+    getUserById(id) {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("user_")) {
+                const userJson = localStorage.getItem(key);
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    if (user.id === id) {
+                        return user;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    isSessionActive() {
+        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
+        return sessionJson !== null;
+    }
+    clearSession() {
+        localStorage.removeItem(StorageService.USER_KEY_ITEM);
+    }
     saveUserSession(session) {
         localStorage.setItem(StorageService.USER_KEY_ITEM, JSON.stringify(session));
     }
-    getUserSession(User) {
+    getUserSession() {
         const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
         if (sessionJson) {
             const sessionObj = JSON.parse(sessionJson);
             const session = sessionObj;
-            if (session.userId === User.id)
-                return session;
+            return session;
         }
         return null;
     }
@@ -58,6 +81,7 @@ export class StorageService {
 // …
 // Nunca toca el DOM
 //TODO repasar para que son user_key_item y User_meal_key_item
+StorageService.USER_KEY = "user_";
 StorageService.USER_KEY_ITEM = "user_logged_in";
 StorageService.USER_MEAL_KEY_ITEM = "user_meals";
 //# sourceMappingURL=StorageService.js.map

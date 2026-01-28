@@ -1,34 +1,13 @@
 <main class="main">
   <div class="content">
-    <h1>Hello, {{ title() }}</h1>
+    <h1>Hello, {{title()}}</h1>
   </div>
-  <div>
-    <section>
-      <app-user></app-user>
-    </section>
-    <ul>
-      <li><app-user></app-user></li>
-      <li><app-user></app-user></li>
-    </ul>
-  </div>
-  <div>
-    @if (isServerRunning){
-      <span>Yes, the server is running</span>
-    }
-    @else {
-      <span>No, the server is not running</span>
-    }
-  </div>
-  <br><br>
-  <div>
-    <h1>FRIENDS CHARACTERS</h1>
-    @for (character of characters; track $index) {
-    <p>{{ character?.id }} - {{ character?.name }}</p>
-    }
-    @empty {
-      <li>No characters found</li>
-    }
-  </div>
-
-  <router-outlet />
+  <nav>
+    <a routerLink="/">Home</a>
+    |
+    <a routerLink="/user">User</a>
+    |
+    <a routerLink="/form">Form</a>
+  </nav>
+  <router-outlet></router-outlet>
 </main>

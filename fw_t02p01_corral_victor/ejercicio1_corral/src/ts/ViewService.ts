@@ -9,10 +9,9 @@
 // Las funciones siempre reciben el elemento contenedor del DOM y los datos a representar.
 import { MyMeal } from "./MyMeal";
 
-//TODO repasar
+
 export class ViewService {
     renderMealList(contenedor: HTMLElement, recetas: MyMeal[]): void {
-        console.log(recetas);
         contenedor.innerHTML = '';
 
         recetas.forEach(receta => {
@@ -37,14 +36,27 @@ export class ViewService {
         });
     }
 
-    renderCategoryOptions(contenedor: HTMLElement, categorias: string[]): void {
+    renderCategoryOptions(contenedor: HTMLElement, categorias: string[], categoriaSelected: string): void {
         contenedor.innerHTML = '<option value="">-- Selecciona una categoría --</option>';
         categorias.forEach(categoria => {
             const option = document.createElement('option');
             option.value = categoria;
             option.textContent = categoria;
             contenedor.appendChild(option);
+            if(categoriaSelected === categoria){
+                option.selected = true;
+            }
         });
     }
+
+    renderBtnSessions(contenedor: HTMLElement): void {
+        contenedor.classList.toggle("d-none");
+        contenedor.classList.toggle("d-block");
+    }
+
+    renderBtnFavorite(contenedor: HTMLElement) : void{
+        contenedor.classList.toggle("active");
+    }
+    
 }
 

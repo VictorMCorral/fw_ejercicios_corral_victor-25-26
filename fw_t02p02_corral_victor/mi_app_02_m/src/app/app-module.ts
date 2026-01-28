@@ -4,15 +4,30 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { User } from './user/user';
+import { Child } from './child/child';
+import { Comments } from './comments/comments';
+
+import { NgOptimizedImage } from '@angular/common';
+import { Home } from './home/home';
+import { Form } from './form/form';
+import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     App,
-    User
+    User,
+    Child,
+    Comments,
+    Home,
+    Form
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgOptimizedImage,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

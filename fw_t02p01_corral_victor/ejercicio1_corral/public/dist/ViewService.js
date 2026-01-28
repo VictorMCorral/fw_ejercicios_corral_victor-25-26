@@ -5,10 +5,8 @@
 // Renderizar planes semanales
 // Mostrar mensajes de error o aviso
 // …
-//TODO repasar
 export class ViewService {
     renderMealList(contenedor, recetas) {
-        console.log(recetas);
         contenedor.innerHTML = '';
         recetas.forEach(receta => {
             const ingredientesCount = receta?.ingredients.length || 0;
@@ -29,14 +27,24 @@ export class ViewService {
             contenedor.appendChild(recetaDiv);
         });
     }
-    renderCategoryOptions(contenedor, categorias) {
+    renderCategoryOptions(contenedor, categorias, categoriaSelected) {
         contenedor.innerHTML = '<option value="">-- Selecciona una categoría --</option>';
         categorias.forEach(categoria => {
             const option = document.createElement('option');
             option.value = categoria;
             option.textContent = categoria;
             contenedor.appendChild(option);
+            if (categoriaSelected === categoria) {
+                option.selected = true;
+            }
         });
+    }
+    renderBtnSessions(contenedor) {
+        contenedor.classList.toggle("d-none");
+        contenedor.classList.toggle("d-block");
+    }
+    renderBtnFavorite(contenedor) {
+        contenedor.classList.toggle("active");
     }
 }
 //# sourceMappingURL=ViewService.js.map

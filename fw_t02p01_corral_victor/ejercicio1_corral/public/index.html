@@ -46,9 +46,14 @@
                 </form>
 
                 <!-- Botones -->
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2" id="usuarioBtn">
                     <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#miModal">
                         Usuario
+                    </button>
+                </div>
+                <div class="d-flex gap-2 d-none" id="cerrarSesionBtn" >
+                    <button class="btn btn-danger" type="button" id="btnCerrarSesion">
+                        Cerrar Sesión
                     </button>
                 </div>
             </div>
@@ -61,6 +66,7 @@
       <select class="form-select" id="categorias">
         <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
       </select>
+      <button class="btn btn-outline-primary w-100" type="button" id="btnGuardar">Guardar Categoria</button>
     </div>
     <hr/>
     <div class="container py-4">

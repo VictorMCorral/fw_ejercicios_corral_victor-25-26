@@ -2,35 +2,14 @@
 import { ApiService } from "./ApiService.js";
 import { ViewService } from "./ViewService.js";
 import { StorageService } from "./StorageService.js";
-function completarCategorias() {
-    // fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
-    //     .then(respuesta => {
-    //         if (!respuesta.ok) {
-    //             throw new Error("Error al obtener los datos de las categorias")
-    //         }
-    //         return respuesta.json();
-    //     })
-    //     .then(data => {
-    //         const selectCategorias: HTMLElement | null = document.getElementById('Categorias');
-    //         if (selectCategorias !== null) {
-    //             data.categories.forEach((categoria: any) => {
-    //                 const option = document.createElement('option');
-    //                 option.value = categoria.strCategory;
-    //                 option.textContent = categoria.strCategory;
-    //                 selectCategorias.appendChild(option);
-    //             });
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error("Error al cargar las categorias:", error);
-    //     });
+function completarCategorias(categoriaSelected) {
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
     apiService.getCategories()
         .then(categorias => {
         const selectCategorias = document.getElementById('categorias');
         if (selectCategorias !== null) {
-            viewService.renderCategoryOptions(selectCategorias, categorias);
+            viewService.renderCategoryOptions(selectCategorias, categorias, categoriaSelected);
         }
     })
         .catch(error => {
@@ -38,21 +17,6 @@ function completarCategorias() {
     });
 }
 async function completarAleatorias() {
-    // fetch("https://www.themealdb.com/api/json/v1/1/random.php")
-    //     .then(res => {
-    //         if (!res.ok) throw new Error("Error al obtener receta random");
-    //         return res.json();
-    //     })
-    //     .then(data => {
-    //         const contenedor = document.getElementById("ochoAleatorias");
-    //         if (!contenedor) return;
-    //         const recetaData = data.meals[0];
-    //         const receta = document.createElement('div');
-    //         receta.classList.add("col");
-    //         receta.innerHTML = crearCard(recetaData)
-    //         contenedor.appendChild(receta);
-    //     })
-    //     .catch(err => console.error(err));
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
     const recetas = [];
@@ -72,44 +36,12 @@ async function completarAleatorias() {
         console.error("Error cargando recetas:", error);
     }
 }
-function filtrarAleatorias() {
-    // const selectCategorias: HTMLElement | null = document.getElementById('Categorias');
-    // let categoriaFiltrada: string = "";
-    // if (selectCategorias !== null && selectCategorias instanceof HTMLSelectElement) {
-    //     categoriaFiltrada = selectCategorias.value;
-    // }
-    // fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${categoriaFiltrada}`)
-    //     .then(res => {
-    //         if (!res.ok) throw new Error("Error al obtener recetas");
-    //         return res.json();
-    //     })
-    //     .then(data => {
-    //         const contenedor = document.getElementById("ochoAleatorias") as HTMLDivElement;
-    //         if (!contenedor) return;
-    //         contenedor.innerHTML = "";
-    //         const aleatorios = crearOchoAleatorios(data.meals.length);
-    //         aleatorios.forEach(async numero => {
-    //             const mealID = data.meals[numero].idMeal;
-    //             try {
-    //                 const resDetalle = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealID}`);
-    //                 if (!resDetalle.ok) throw new Error("Error al obtener detalles de la receta");
-    //                 const detalleData = await resDetalle.json();
-    //                 const recetaCompleta: Receta = detalleData.meals[0];
-    //                 const recetaDiv = document.createElement('div');
-    //                 recetaDiv.classList.add("col");
-    //                 recetaDiv.innerHTML = crearCard(recetaCompleta);
-    //                 contenedor.appendChild(recetaDiv);
-    //             } catch (err) {
-    //                 console.error(err);
-    //             }
-    //         });
-    //     })
-    //     .catch(err => console.error(err));
+function filtrarAleatorias(categoria) {
     const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
     const viewService = new ViewService();
     const selectCategorias = document.getElementById('categorias');
-    let categoriaFiltrada = "";
-    if (selectCategorias !== null && selectCategorias instanceof HTMLSelectElement) {
+    let categoriaFiltrada = categoria;
+    if (selectCategorias !== null && selectCategorias.value !== "") {
         categoriaFiltrada = selectCategorias.value;
     }
     apiService.getMealsByCategory(categoriaFiltrada)
@@ -192,22 +124,42 @@ function logearUsuario() {
             };
             storageService.saveUserSession(authSession);
             console.log("Sesión de autenticación creada:", authSession);
-            cargarZonaPrivada(usuarioGuardado);
+            window.location.href = "index.html";
         }
         else {
             console.error("Credenciales incorrectas");
         }
     }
 }
-function cargarZonaPrivada(usuarioGuardado) {
+function logoutUsuario() {
+    console.log("Cerrando sesión de usuario...");
     const storageService = new StorageService();
-    const sessionGuardada = storageService.getUserSession(usuarioGuardado);
-    if (sessionGuardada) {
-        window.location.href = "private.html";
+    storageService.clearSession();
+    window.location.href = "index.html";
+}
+function saveCategory() {
+    const storage = new StorageService();
+    const session = storage.getUserSession();
+    const user = storage.getUserById(session.userId);
+    const view = new ViewService();
+    const favoritaCont = document.getElementById("categorias");
+    const favoritaBtn = document.getElementById("btnGuardar");
+    if (favoritaCont.value !== "") {
+        if (user.favoriteCategory === favoritaCont.value) {
+            console.log("Eliminando categoría");
+            delete user.favoriteCategory;
+            view.renderBtnFavorite(favoritaBtn);
+            storage.saveUser(user);
+        }
+        else {
+            console.log("Asignando nueva categoría favorita");
+            user.favoriteCategory = favoritaCont.value; // asigna nueva categoría
+            view.renderBtnFavorite(favoritaBtn);
+            console.log(user);
+            storage.saveUser(user);
+        }
     }
-    else {
-        console.error("No hay sesión activa");
-    }
+    //funciona
 }
 function cargarFavoritos() {
     //TODO implementar cargar favoritos
@@ -219,34 +171,50 @@ function cargarFavoritos() {
 }
 window.addEventListener('DOMContentLoaded', () => {
     const archivo = window.location.pathname.split("/").pop();
-    if (archivo === "index.html") {
-        console.log(archivo);
-        completarCategorias();
-        completarAleatorias();
-        const select = document.getElementById("categorias");
-        if (select !== null) {
-            select.addEventListener("change", filtrarAleatorias);
+    const storage = new StorageService();
+    const view = new ViewService();
+    const usuarioBtn = document.getElementById("usuarioBtn");
+    const cerrarSesionBtn = document.getElementById("cerrarSesionBtn");
+    if (storage.isSessionActive()) {
+        view.renderBtnSessions(cerrarSesionBtn);
+        view.renderBtnSessions(usuarioBtn);
+        const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+        btnCerrarSesion.addEventListener("click", logoutUsuario);
+        const btnSaveSession = document.getElementById("btnGuardar");
+        btnSaveSession.addEventListener("click", saveCategory);
+        const session = storage.getUserSession();
+        const user = storage.getUserById(session.userId);
+        let categoria = user.favoriteCategory ?? "";
+        if (user.favoriteCategory) {
+            const btnFavorito = document.getElementById("btnGuardar");
+            view.renderBtnFavorite(btnFavorito);
+            filtrarAleatorias(categoria);
         }
-        const formulario = document.getElementById("formCrearUsuario");
-        formulario.addEventListener("submit", (event) => {
-            event.preventDefault();
-            registrarUsuario();
-        });
-        const formularioLogin = document.getElementById("formLoginUsuario");
-        formularioLogin.addEventListener("submit", (event) => {
-            event.preventDefault();
-            logearUsuario();
+        else {
+            completarAleatorias();
+        }
+        console.log(user);
+        completarCategorias(categoria);
+    }
+    else {
+        completarCategorias("");
+        completarAleatorias();
+    }
+    const select = document.getElementById("categorias");
+    if (select !== null) {
+        select.addEventListener("change", () => {
+            filtrarAleatorias("");
         });
     }
-    if (archivo === "private.html") {
-        console.log(archivo);
-        completarCategorias();
-        completarAleatorias();
-        cargarFavoritos();
-        const select = document.getElementById("categorias");
-        if (select !== null) {
-            select.addEventListener("change", filtrarAleatorias);
-        }
-    }
+    const formulario = document.getElementById("formCrearUsuario");
+    formulario.addEventListener("submit", (event) => {
+        event.preventDefault();
+        registrarUsuario();
+    });
+    const formularioLogin = document.getElementById("formLoginUsuario");
+    formularioLogin.addEventListener("submit", (event) => {
+        event.preventDefault();
+        logearUsuario();
+    });
 });
 //# sourceMappingURL=app.js.map
