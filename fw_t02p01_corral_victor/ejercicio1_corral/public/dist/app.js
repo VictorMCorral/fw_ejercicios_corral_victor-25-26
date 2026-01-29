@@ -89,13 +89,21 @@ function registrarUsuario() {
         console.log(passwordConfirm);
         if (password === passwordConfirm) {
             const nuevoUser = {
-                id: 1,
+                id: storageService.nextUserId(),
                 name: username,
                 email: email,
                 password: password
             };
             console.log("Usuario registrado:", nuevoUser);
-            storageService.saveUser(nuevoUser);
+            storageService.registerUser(nuevoUser);
+            const authSession = {
+                userId: nuevoUser.id,
+                name: nuevoUser.name,
+                loginDate: new Date()
+            };
+            storageService.saveUserSession(authSession);
+            console.log("Sesión de autenticación creada:", authSession);
+            window.location.href = "index.html";
         }
         else {
             console.error("Las contraseñas no coinciden");
@@ -111,12 +119,12 @@ function logearUsuario() {
     if (emailInput && passwordInput) {
         const email = emailInput.value;
         const password = passwordInput.value;
-        if (storageService.validateUser(email, password)) {
-            const usuarioGuardado = storageService.getUserByEmail(email);
-            if (!usuarioGuardado) {
-                console.error("Usuario no encontrado");
-                return;
-            }
+        const usuarioGuardado = storageService.getUserByEmail(email);
+        if (!usuarioGuardado) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+        if (password === usuarioGuardado.password) {
             const authSession = {
                 userId: usuarioGuardado.id,
                 name: usuarioGuardado.name,
@@ -126,9 +134,9 @@ function logearUsuario() {
             console.log("Sesión de autenticación creada:", authSession);
             window.location.href = "index.html";
         }
-        else {
-            console.error("Credenciales incorrectas");
-        }
+    }
+    else {
+        console.error("Credenciales incorrectas");
     }
 }
 function logoutUsuario() {
@@ -139,8 +147,7 @@ function logoutUsuario() {
 }
 function saveCategory() {
     const storage = new StorageService();
-    const session = storage.getUserSession();
-    const user = storage.getUserById(session.userId);
+    const user = storage.getUserSession();
     const view = new ViewService();
     const favoritaCont = document.getElementById("categorias");
     const favoritaBtn = document.getElementById("btnGuardar");
@@ -150,16 +157,16 @@ function saveCategory() {
             delete user.favoriteCategory;
             view.renderBtnFavorite(favoritaBtn);
             storage.saveUser(user);
+            console.log(user);
         }
         else {
             console.log("Asignando nueva categoría favorita");
-            user.favoriteCategory = favoritaCont.value; // asigna nueva categoría
+            user.favoriteCategory = favoritaCont.value;
             view.renderBtnFavorite(favoritaBtn);
             console.log(user);
             storage.saveUser(user);
         }
     }
-    //funciona
 }
 function cargarFavoritos() {
     //TODO implementar cargar favoritos
@@ -182,8 +189,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btnCerrarSesion.addEventListener("click", logoutUsuario);
         const btnSaveSession = document.getElementById("btnGuardar");
         btnSaveSession.addEventListener("click", saveCategory);
-        const session = storage.getUserSession();
-        const user = storage.getUserById(session.userId);
+        const user = storage.getUserSession();
         let categoria = user.favoriteCategory ?? "";
         if (user.favoriteCategory) {
             const btnFavorito = document.getElementById("btnGuardar");

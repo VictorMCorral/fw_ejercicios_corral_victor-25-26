@@ -1,87 +1,92 @@
+import { findIndex } from 'rxjs';
 import { User } from "./User.js";
 import { AuthSession } from "./AuthSession.js";
+import { MyMeal } from './MyMeal.js';
+import { UserMeal } from './UserMeal.js';
 
 
 export class StorageService {
-    //     Clase StorageService: gestiona el acceso a localStorage.
+    private static USER_KEY: string = "users";
+    private static USER_KEY_ITEM: string = "authSession";
+    private static USER_MEAL_KEY_ITEM: string = "userMeals_";
 
-    // Atributos mínimos (voluntario):
-    // USER_KEY_ITEM, USER_MEAL_KEY_ITEM, …
-
-    // Responsabilidades
-    // Alta y validación de usuarios
-    // Gestión de sesión
-    // Guardar y recuperar recetas del usuario
-    // Guardar y recuperar planes semanales
-    // Guardar preferencias del usuario
-    // …
-
-    // Nunca toca el DOM
-    //TODO repasar para que son user_key_item y User_meal_key_item
-    private static USER_KEY: string = "user_";
-    private static USER_KEY_ITEM: string = "user_logged_in";
-    private static USER_MEAL_KEY_ITEM: string = "user_meals";
-
-    saveUser(user: User): void {
-        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(user));
-    }
-
-
-    validateUser(id: number, password: string): boolean {
-        const usersString = localStorage.getItem(StorageService.USER_KEY);
-        if (!usersString) return false;
-
-        try {
-            const users: User[] = JSON.parse(usersString);
-
-            // Buscar el usuario con id y contraseña coincidentes
-            const userFound = users.find(user => user.id === id && user.password === password);
-
-            return !!userFound; // true si se encontró, false si no
-        } catch (error) {
-            console.error("Error parsing users from localStorage", error);
-            return false;
-        }
-    }
-
-
-    getUserByEmail(email: string): User | null {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user: User = JSON.parse(userJson);
-                    if (user.email === email) {
-                        return user;
-                    }
-                }
+    getLocalStorage(key: string) {
+        const storage = localStorage.getItem(key) ?? null;
+        let datos = null;
+        if (storage) {
+            try {
+                return JSON.parse(storage);
+            } catch (error) {
+                return null
             }
         }
-        return null;
+    }
+
+    saveUser(user: User): void {
+        const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
+        const index = users.findIndex(u => u.id === user.id);
+
+        if (index !== -1) {
+            users[index] = user;
+        } else {
+            users.push(user);
+        }
+
+        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(users));
+    }
+
+    registerUser(user: User): void {
+        const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
+        const index = users.findIndex(u => u.id === user.id);
+
+        if (index !== -1) {
+            users[index] = user;
+        } else {
+            users.push(user);
+        }
+
+        if (!this.existeEmail(user.email)) {
+            users.push(user);
+            localStorage.setItem(StorageService.USER_KEY, JSON.stringify(users));
+        }
+    }
+
+    existeEmail(email: string) {
+        let userFound: User | null = this.getUserByEmail(email);
+        if (userFound) {
+            return true;
+        }
+        return false;
+    }
+
+    nextUserId(): number {
+        const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
+        const user = users[users.length - 1] as User;
+        if (user) {
+            let id = user.id;
+            return id + 1;
+        }
+        return 1;
+    }
+
+    getUserByEmail(email: string): User | null {
+        const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
+        let user = users.find(user => user.email === email) as User ?? null;
+        return user;
     }
 
     getUserById(id: number): User | null {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user: User = JSON.parse(userJson);
-                    if (user.id === id) {
-                        return user;
-                    }
-                }
-            }
-        }
-        return null;
-
-
+        const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
+        let user = users.find(user => user.id === id) as User ?? null;
+        return user;
     }
 
     isSessionActive(): boolean {
-        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
-        return sessionJson !== null;
+        const sessionsJson = (this.getLocalStorage(StorageService.USER_KEY_ITEM) as AuthSession) ?? null;
+        if (sessionsJson) {
+            return true;
+        }
+        return false;
     }
 
     clearSession(): void {
@@ -92,14 +97,25 @@ export class StorageService {
         localStorage.setItem(StorageService.USER_KEY_ITEM, JSON.stringify(session));
     }
 
-    getUserSession(): AuthSession | null {
-        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
-        if (sessionJson) {
-            const sessionObj = JSON.parse(sessionJson);
-            const session: AuthSession = sessionObj;
-            return session;
+    getUserSession(): User | null {
+        const session = (this.getLocalStorage(StorageService.USER_KEY_ITEM) as AuthSession) ?? null;
+        const user = this.getUserById(session.userId)
+        return user;
+    }
+
+    //TODO estamos con las recetas
+    saveUserMeals(meal : UserMeal) {
+        const user : User | null = this.getUserById(meal.userId);
+        if(user){
+            const userMeals = this.getUserMeals(user) as MyMeal[];
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(userMeals))
         }
-        return null;
+
+    }
+
+    getUserMeals(user: User) : MyMeal[]{
+        let meals2 = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`) as MyMeal[] ?? [];
+        return meals2;
     }
 
 }

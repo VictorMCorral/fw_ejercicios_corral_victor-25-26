@@ -108,13 +108,21 @@ function registrarUsuario(): void {
         console.log(passwordConfirm);
         if (password === passwordConfirm) {
             const nuevoUser: User = {
-                id: 1,
+                id: storageService.nextUserId(),
                 name: username,
                 email: email,
                 password: password
             };
             console.log("Usuario registrado:", nuevoUser);
-            storageService.saveUser(nuevoUser);
+            storageService.registerUser(nuevoUser);
+            const authSession: AuthSession = {
+                userId: nuevoUser.id,
+                name: nuevoUser.name,
+                loginDate: new Date()
+            };
+            storageService.saveUserSession(authSession);
+            console.log("Sesión de autenticación creada:", authSession);
+            window.location.href = "index.html";
         } else {
             console.error("Las contraseñas no coinciden");
         }
@@ -131,12 +139,12 @@ function logearUsuario(): void {
     if (emailInput && passwordInput) {
         const email = emailInput.value;
         const password = passwordInput.value;
-        if (storageService.validateUser(email, password)) {
-            const usuarioGuardado: User | null = storageService.getUserByEmail(email);
-            if (!usuarioGuardado) {
-                console.error("Usuario no encontrado");
-                return;
-            }
+        const usuarioGuardado: User | null = storageService.getUserByEmail(email);
+        if (!usuarioGuardado) {
+            console.error("Usuario no encontrado");
+            return;
+        }
+        if (password === usuarioGuardado.password) {
             const authSession: AuthSession = {
                 userId: usuarioGuardado.id,
                 name: usuarioGuardado.name,
@@ -145,11 +153,12 @@ function logearUsuario(): void {
             storageService.saveUserSession(authSession);
             console.log("Sesión de autenticación creada:", authSession);
             window.location.href = "index.html";
-        } else {
-            console.error("Credenciales incorrectas");
         }
+    } else {
+        console.error("Credenciales incorrectas");
     }
 }
+
 
 function logoutUsuario(): void {
     console.log("Cerrando sesión de usuario...");
@@ -160,28 +169,26 @@ function logoutUsuario(): void {
 
 function saveCategory(): void {
     const storage = new StorageService();
-    const session = storage.getUserSession() as AuthSession;
-    const user = storage.getUserById(session.userId) as User;
+    const user = storage.getUserSession() as User;
     const view = new ViewService();
     const favoritaCont = document.getElementById("categorias") as HTMLSelectElement;
     const favoritaBtn = document.getElementById("btnGuardar") as HTMLSelectElement;
 
-    if(favoritaCont.value !== ""){
+    if (favoritaCont.value !== "") {
         if (user.favoriteCategory === favoritaCont.value) {
             console.log("Eliminando categoría");
             delete user.favoriteCategory;
             view.renderBtnFavorite(favoritaBtn)
             storage.saveUser(user);
+            console.log(user);
         } else {
             console.log("Asignando nueva categoría favorita");
-            user.favoriteCategory = favoritaCont.value; // asigna nueva categoría
+            user.favoriteCategory = favoritaCont.value; 
             view.renderBtnFavorite(favoritaBtn)
             console.log(user);
             storage.saveUser(user);
         }
     }
-
-    //funciona
 }
 
 function cargarFavoritos(): void {
@@ -208,11 +215,10 @@ window.addEventListener('DOMContentLoaded', () => {
         const btnSaveSession = document.getElementById("btnGuardar") as HTMLButtonElement;
         btnSaveSession.addEventListener("click", saveCategory);
 
-        const session = storage.getUserSession() as AuthSession;
-        const user = storage.getUserById(session.userId) as User;
+        const user = storage.getUserSession() as User;
         let categoria = user.favoriteCategory ?? "";
 
-        if(user.favoriteCategory){
+        if (user.favoriteCategory) {
             const btnFavorito = document.getElementById("btnGuardar") as HTMLDivElement;
             view.renderBtnFavorite(btnFavorito);
             filtrarAleatorias(categoria);

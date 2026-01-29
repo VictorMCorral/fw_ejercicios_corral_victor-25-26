@@ -1,57 +1,73 @@
 export class StorageService {
-    saveUser(user) {
-        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(user));
-    }
-    validateUser(id, password) {
-        const users = localStorage.getItem(StorageService.USER_KEY);
-        //TODO seguimos por aqui
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user = JSON.parse(userJson);
-                    if (user.email === email && user.password === password) {
-                        return true;
-                    }
-                }
+    getLocalStorage(key) {
+        const storage = localStorage.getItem(key) ?? null;
+        let datos = null;
+        if (storage) {
+            try {
+                return JSON.parse(storage);
             }
+            catch (error) {
+                return null;
+            }
+        }
+    }
+    saveUser(user) {
+        const users = this.getLocalStorage(StorageService.USER_KEY) ?? [];
+        const index = users.findIndex(u => u.id === user.id);
+        if (index !== -1) {
+            users[index] = user;
+        }
+        else {
+            users.push(user);
+        }
+        localStorage.setItem(StorageService.USER_KEY, JSON.stringify(users));
+    }
+    registerUser(user) {
+        const users = this.getLocalStorage(StorageService.USER_KEY) ?? [];
+        const index = users.findIndex(u => u.id === user.id);
+        if (index !== -1) {
+            users[index] = user;
+        }
+        else {
+            users.push(user);
+        }
+        if (!this.existeEmail(user.email)) {
+            users.push(user);
+            localStorage.setItem(StorageService.USER_KEY, JSON.stringify(users));
+        }
+    }
+    existeEmail(email) {
+        let userFound = this.getUserByEmail(email);
+        if (userFound) {
+            return true;
         }
         return false;
     }
-    getUserByEmail(email) {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user = JSON.parse(userJson);
-                    if (user.email === email) {
-                        return user;
-                    }
-                }
-            }
+    nextUserId() {
+        const users = this.getLocalStorage(StorageService.USER_KEY) ?? [];
+        const user = users[users.length - 1];
+        if (user) {
+            let id = user.id;
+            return id + 1;
         }
-        return null;
+        return 1;
+    }
+    getUserByEmail(email) {
+        const users = this.getLocalStorage(StorageService.USER_KEY) ?? [];
+        let user = users.find(user => user.email === email) ?? null;
+        return user;
     }
     getUserById(id) {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith("user_")) {
-                const userJson = localStorage.getItem(key);
-                if (userJson) {
-                    const user = JSON.parse(userJson);
-                    if (user.id === id) {
-                        return user;
-                    }
-                }
-            }
-        }
-        return null;
+        const users = this.getLocalStorage(StorageService.USER_KEY) ?? [];
+        let user = users.find(user => user.id === id) ?? null;
+        return user;
     }
     isSessionActive() {
-        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
-        return sessionJson !== null;
+        const sessionsJson = this.getLocalStorage(StorageService.USER_KEY_ITEM) ?? null;
+        if (sessionsJson) {
+            return true;
+        }
+        return false;
     }
     clearSession() {
         localStorage.removeItem(StorageService.USER_KEY_ITEM);
@@ -60,28 +76,24 @@ export class StorageService {
         localStorage.setItem(StorageService.USER_KEY_ITEM, JSON.stringify(session));
     }
     getUserSession() {
-        const sessionJson = localStorage.getItem(StorageService.USER_KEY_ITEM);
-        if (sessionJson) {
-            const sessionObj = JSON.parse(sessionJson);
-            const session = sessionObj;
-            return session;
+        const session = this.getLocalStorage(StorageService.USER_KEY_ITEM) ?? null;
+        const user = this.getUserById(session.userId);
+        return user;
+    }
+    //TODO estamos con las recetas
+    saveUserMeals(meal) {
+        const user = this.getUserById(meal.userId);
+        if (user) {
+            const userMeals = this.getUserMeals(user);
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(userMeals));
         }
-        return null;
+    }
+    getUserMeals(user) {
+        let meals2 = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`) ?? [];
+        return meals2;
     }
 }
-//     Clase StorageService: gestiona el acceso a localStorage.
-// Atributos mínimos (voluntario):
-// USER_KEY_ITEM, USER_MEAL_KEY_ITEM, …
-// Responsabilidades
-// Alta y validación de usuarios
-// Gestión de sesión
-// Guardar y recuperar recetas del usuario
-// Guardar y recuperar planes semanales
-// Guardar preferencias del usuario
-// …
-// Nunca toca el DOM
-//TODO repasar para que son user_key_item y User_meal_key_item
-StorageService.USER_KEY = "user_";
-StorageService.USER_KEY_ITEM = "user_logged_in";
-StorageService.USER_MEAL_KEY_ITEM = "user_meals";
+StorageService.USER_KEY = "users";
+StorageService.USER_KEY_ITEM = "authSession";
+StorageService.USER_MEAL_KEY_ITEM = "userMeals_";
 //# sourceMappingURL=StorageService.js.map
