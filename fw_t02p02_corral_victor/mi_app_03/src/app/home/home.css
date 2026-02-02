@@ -19,7 +19,6 @@ button {
   border: solid 1px var(--primary-color);
   background: var(--primary-color);
   color: white;
-  background-color: black;
   border-radius: 8px;
 }
 @media (min-width: 500px) and (max-width: 768px) {
