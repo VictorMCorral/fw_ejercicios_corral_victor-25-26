@@ -2,8 +2,9 @@
 import { ApiService } from "./ApiService.js";
 import { ViewService } from "./ViewService.js";
 import { StorageService } from "./StorageService.js";
+import { statusUserMeal } from './UserMeal.js';
 function completarCategorias(categoriaSelected) {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
     apiService.getCategories()
         .then(categorias => {
@@ -17,7 +18,7 @@ function completarCategorias(categoriaSelected) {
     });
 }
 async function completarAleatorias() {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
     const recetas = [];
     const contenedor = document.getElementById("ochoAleatorias");
@@ -30,14 +31,20 @@ async function completarAleatorias() {
         }
         const resultados = await Promise.all(peticiones);
         const recetas = resultados.flat();
-        viewService.renderMealList(contenedor, recetas);
+        const storage = new StorageService();
+        if (storage.isSessionActive()) {
+            viewService.renderMealList(contenedor, recetas);
+        }
+        else {
+            viewService.renderMealListOutDetails(contenedor, recetas);
+        }
     }
     catch (error) {
         console.error("Error cargando recetas:", error);
     }
 }
 function filtrarAleatorias(categoria) {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
     const selectCategorias = document.getElementById('categorias');
     let categoriaFiltrada = categoria;
@@ -115,7 +122,6 @@ function logearUsuario() {
     const storageService = new StorageService();
     const emailInput = document.getElementById("emailLogin");
     const passwordInput = document.getElementById("passwordLogin");
-    //TODO implementar guardar sesion
     if (emailInput && passwordInput) {
         const email = emailInput.value;
         const password = passwordInput.value;
@@ -132,7 +138,7 @@ function logearUsuario() {
             };
             storageService.saveUserSession(authSession);
             console.log("Sesión de autenticación creada:", authSession);
-            window.location.href = "index.html";
+            window.location.reload();
         }
     }
     else {
@@ -176,19 +182,46 @@ function cargarFavoritos() {
         return;
     contenedor.innerHTML = "<p>No hay favoritos aun</p>";
 }
-window.addEventListener('DOMContentLoaded', () => {
-    const archivo = window.location.pathname.split("/").pop();
-    const storage = new StorageService();
-    const view = new ViewService();
+async function cargarReceta(idMeal, view) {
+    const api = new ApiService();
+    const receta = await api.getMealDetails(idMeal);
+    view.renderMeal(receta);
+}
+function pintarCabecera(storage, view) {
     const usuarioBtn = document.getElementById("usuarioBtn");
     const cerrarSesionBtn = document.getElementById("cerrarSesionBtn");
     if (storage.isSessionActive()) {
         view.renderBtnSessions(cerrarSesionBtn);
         view.renderBtnSessions(usuarioBtn);
-        const btnCerrarSesion = document.getElementById("btnCerrarSesion");
-        btnCerrarSesion.addEventListener("click", logoutUsuario);
-        const btnSaveSession = document.getElementById("btnGuardar");
-        btnSaveSession.addEventListener("click", saveCategory);
+    }
+}
+function gestionarRutas(archivo) {
+    const storage = new StorageService();
+    const view = new ViewService();
+    pintarCabecera(storage, view);
+    const formulario = document.getElementById("formCrearUsuario");
+    formulario.addEventListener("submit", (event) => {
+        event.preventDefault();
+        registrarUsuario();
+    });
+    const formularioLogin = document.getElementById("formLoginUsuario");
+    formularioLogin.addEventListener("submit", (event) => {
+        event.preventDefault();
+        logearUsuario();
+    });
+    const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    btnCerrarSesion.addEventListener("click", logoutUsuario);
+    if (archivo === "index.html") {
+        activarIndex(storage, view);
+    }
+    else if (archivo === "receta.html") {
+        activarReceta(storage, view);
+    }
+}
+function activarIndex(storage, view) {
+    if (storage.isSessionActive()) {
+        const guardarBtn = document.getElementById("btnGuardar");
+        view.renderBtnSessions(guardarBtn);
         const user = storage.getUserSession();
         let categoria = user.favoriteCategory ?? "";
         if (user.favoriteCategory) {
@@ -203,6 +236,9 @@ window.addEventListener('DOMContentLoaded', () => {
         completarCategorias(categoria);
     }
     else {
+        // const btnDetalles = document.getElementById("btnDetalles") as HTMLInputElement;
+        // console.log(btnDetalles);
+        // view.renderBtnSessions(btnDetalles);
         completarCategorias("");
         completarAleatorias();
     }
@@ -211,16 +247,63 @@ window.addEventListener('DOMContentLoaded', () => {
         select.addEventListener("change", () => {
             filtrarAleatorias("");
         });
+        const btnSaveSession = document.getElementById("btnGuardar");
+        btnSaveSession.addEventListener("click", saveCategory);
     }
-    const formulario = document.getElementById("formCrearUsuario");
-    formulario.addEventListener("submit", (event) => {
-        event.preventDefault();
-        registrarUsuario();
+}
+async function btnDetalles(view) {
+    const btnDetalles = document.getElementById("btnDetalles");
+    console.log(btnDetalles);
+    view.renderBtnSessions(btnDetalles);
+}
+function activarReceta(storage, view) {
+    const params = new URLSearchParams(window.location.search);
+    const datos = Object.fromEntries(params.entries());
+    let idMeal = Number(datos.id);
+    const user = storage.getUserSession();
+    const userMeals = storage.getUserMeals(user.id);
+    let isSave = false;
+    const btnGuardarReceta = document.getElementById("btnGuardarReceta");
+    const btnEliminarReceta = document.getElementById("btnEliminarReceta");
+    userMeals.forEach(receta => {
+        if (receta.mealId === idMeal) {
+            isSave = true;
+        }
     });
-    const formularioLogin = document.getElementById("formLoginUsuario");
-    formularioLogin.addEventListener("submit", (event) => {
-        event.preventDefault();
-        logearUsuario();
+    if (isSave) {
+        view.renderBtnSessions(btnGuardarReceta);
+        view.renderBtnSessions(btnEliminarReceta);
+    }
+    cargarReceta(idMeal, view);
+    btnGuardarReceta.addEventListener("click", () => {
+        guardarReceta(idMeal, storage, view);
     });
+    btnEliminarReceta.addEventListener("click", () => {
+        eliminarReceta(idMeal, storage, view);
+    });
+}
+function guardarReceta(idMeal, storage, view) {
+    const user = storage.getUserSession() ?? null;
+    let userId = null;
+    if (user) {
+        userId = user.id;
+        const recetaGuardada = {
+            userId: userId,
+            mealId: idMeal,
+            saveDate: new Date(),
+            status: statusUserMeal.Todo,
+        };
+        storage.saveUserMeals(recetaGuardada);
+        view.renderBtnRecetas();
+    }
+}
+;
+function eliminarReceta(idMeal, storage, view) {
+    storage.deleteUserMeals(idMeal);
+    view.renderBtnRecetas();
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const archivo = window.location.pathname.split("/").pop();
+    gestionarRutas(archivo);
 });
 //# sourceMappingURL=app.js.map

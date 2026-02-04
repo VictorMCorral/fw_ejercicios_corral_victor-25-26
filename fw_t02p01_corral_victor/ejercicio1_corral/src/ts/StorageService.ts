@@ -12,7 +12,7 @@ export class StorageService {
 
     getLocalStorage(key: string) {
         const storage = localStorage.getItem(key) ?? null;
-        let datos = null;
+
         if (storage) {
             try {
                 return JSON.parse(storage);
@@ -105,19 +105,36 @@ export class StorageService {
 
     //TODO estamos con las recetas
     saveUserMeals(meal : UserMeal) {
-        const user : User | null = this.getUserById(meal.userId);
-        if(user){
-            const userMeals = this.getUserMeals(user) as MyMeal[];
-            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(userMeals))
+        console.log(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`);
+        const storage = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`) as UserMeal[];
+        if(storage){
+            storage.push(meal);
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`,JSON.stringify(storage));
+        } else {
+            const nueva: UserMeal[] = [meal];
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`,JSON.stringify(nueva));
         }
 
     }
 
-    getUserMeals(user: User) : MyMeal[]{
-        let meals2 = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`) as MyMeal[] ?? [];
-        return meals2;
+    getUserMeals(id: number): UserMeal[] {
+        return this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${id}`) as UserMeal[] ?? null;
     }
 
+    deleteUserMeals(idmeal: number){
+        const user = this.getUserSession() as User;
+        const meals = this.getUserMeals(user.id);
+        console.log(meals);
+
+        const newMeals = meals.filter(receta => receta.mealId !== idmeal);
+
+        console.log(meals);
+        if(newMeals.length > 0){
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`,JSON.stringify(newMeals));
+        } else {
+            localStorage.removeItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`)
+        }
+    }
 }
 
 

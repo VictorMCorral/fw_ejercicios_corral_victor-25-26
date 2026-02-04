@@ -5,11 +5,10 @@ export class ApiService {
     private API_URL: string;
     private API_KEY: string;
 
-    constructor(apiUrl: string, apiKey: string = '') {
-        this.API_URL = apiUrl
-        this.API_KEY = apiKey;
+    constructor() {
+        this.API_URL = "https://www.themealdb.com/api/json/v1"
+        this.API_KEY = "1";
     }
-
     async getRandomMeals(): Promise<MyMeal> {
         let url = `${this.API_URL}/${this.API_KEY}/random.php`;
         const response = await fetch(url);

@@ -1,1 +1,1 @@
-{"version":3,"file":"UserMeal.js","sourceRoot":"","sources":["../../src/ts/UserMeal.ts"],"names":[],"mappings":"AAEA,IAAK,cAGJ;AAHD,WAAK,cAAc;IACf,yCAAuB,CAAA;IACvB,sCAAoB,CAAA;AACxB,CAAC,EAHI,cAAc,KAAd,cAAc,QAGlB"}
+{"version":3,"file":"UserMeal.js","sourceRoot":"","sources":["../../src/ts/UserMeal.ts"],"names":[],"mappings":"AAEA,MAAM,CAAN,IAAY,cAGX;AAHD,WAAY,cAAc;IACtB,yCAAuB,CAAA;IACvB,sCAAoB,CAAA;AACxB,CAAC,EAHW,cAAc,KAAd,cAAc,QAGzB"}

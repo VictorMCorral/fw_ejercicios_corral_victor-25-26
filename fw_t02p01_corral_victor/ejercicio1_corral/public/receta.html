@@ -61,18 +61,8 @@
     </nav>
 </header>
   <main class="main-content"> 
-    <div class="container py-4"> 
-      <h1>Buscador</h1>
-      <select class="form-select" id="categorias">
-        <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
-      </select>
-      <button class="btn btn-outline-primary w-100 d-none" type="button" id="btnGuardar">Guardar Categoria</button>
-    </div>
-    <hr/>
     <div class="container py-4">
-      <h3>Ocho aleatorias</h3>
-      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias"></div>
-    </div><!-- Modal -->
+       <!-- Modal -->
 <div class="modal fade" id="miModal" tabindex="-1" aria-labelledby="miModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -152,6 +142,20 @@
         </div>
     </div>
 </div>
+      <div class="mt-5 p-3" id="recipe-container"> 
+        <div class="row">
+          <div class="col-md-5"><img class="img-fluid rounded shadow" id="recipe-img" src="" alt="Imagen de la receta"/></div>
+          <div class="col-md-5">
+            <h4>Categoría: <span class="badge bg-primary" id="recipe-category"></span></h4>
+            <h4>Origen: <span class="badge bg-secondary" id="recipe-area"></span></h4>
+            <h3 class="mt-4">Ingredientes</h3>
+            <ul class="list-group list-group-flush" id="recipe-ingredients"></ul>
+            <button class="btn btn-outline-primary w-100" type="button" id="btnGuardarReceta">Guardar</button>
+            <button class="btn btn-outline-danger w-100 d-none" type="button" id="btnEliminarReceta">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main><footer
     class="d-flex flex-wrap justify-content-between align-items-center py-3 fixed-bottom bg-dark text-white shadow-lg">
 
@@ -181,6 +185,7 @@
         </li>
     </ul>
 
-</footer><script type="module" src="dist/app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</footer>
+  <script type="module" src="dist/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

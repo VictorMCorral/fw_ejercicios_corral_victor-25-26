@@ -1,7 +1,7 @@
 export class ApiService {
-    constructor(apiUrl, apiKey = '') {
-        this.API_URL = apiUrl;
-        this.API_KEY = apiKey;
+    constructor() {
+        this.API_URL = "https://www.themealdb.com/api/json/v1";
+        this.API_KEY = "1";
     }
     async getRandomMeals() {
         let url = `${this.API_URL}/${this.API_KEY}/random.php`;

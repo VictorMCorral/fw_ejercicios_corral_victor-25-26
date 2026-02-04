@@ -1,7 +1,6 @@
 export class StorageService {
     getLocalStorage(key) {
         const storage = localStorage.getItem(key) ?? null;
-        let datos = null;
         if (storage) {
             try {
                 return JSON.parse(storage);
@@ -82,15 +81,32 @@ export class StorageService {
     }
     //TODO estamos con las recetas
     saveUserMeals(meal) {
-        const user = this.getUserById(meal.userId);
-        if (user) {
-            const userMeals = this.getUserMeals(user);
-            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(userMeals));
+        console.log(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`);
+        const storage = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`);
+        if (storage) {
+            storage.push(meal);
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`, JSON.stringify(storage));
+        }
+        else {
+            const nueva = [meal];
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`, JSON.stringify(nueva));
         }
     }
-    getUserMeals(user) {
-        let meals2 = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`) ?? [];
-        return meals2;
+    getUserMeals(id) {
+        return this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${id}`) ?? null;
+    }
+    deleteUserMeals(idmeal) {
+        const user = this.getUserSession();
+        const meals = this.getUserMeals(user.id);
+        console.log(meals);
+        const newMeals = meals.filter(receta => receta.mealId !== idmeal);
+        console.log(meals);
+        if (newMeals.length > 0) {
+            localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(newMeals));
+        }
+        else {
+            localStorage.removeItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`);
+        }
     }
 }
 StorageService.USER_KEY = "users";

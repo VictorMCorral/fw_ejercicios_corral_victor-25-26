@@ -5,11 +5,12 @@ import { ViewService } from "./ViewService.js";
 import { StorageService } from "./StorageService.js";
 import { User } from "./User.js";
 import { AuthSession } from "./AuthSession.js";
+import { UserMeal, statusUserMeal } from './UserMeal.js';
 
 
 
 function completarCategorias(categoriaSelected: string): void {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
     apiService.getCategories()
         .then(categorias => {
@@ -23,9 +24,8 @@ function completarCategorias(categoriaSelected: string): void {
         });
 }
 
-
 async function completarAleatorias(): Promise<void> {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
 
     const recetas: MyMeal[] = [];
@@ -42,7 +42,13 @@ async function completarAleatorias(): Promise<void> {
         const resultados = await Promise.all(peticiones);
         const recetas: MyMeal[] = resultados.flat();
 
-        viewService.renderMealList(contenedor, recetas);
+        const storage = new StorageService();
+        if(storage.isSessionActive()){
+            viewService.renderMealList(contenedor, recetas);
+        } else {
+            viewService.renderMealListOutDetails(contenedor, recetas);
+        }
+
 
     } catch (error) {
         console.error("Error cargando recetas:", error);
@@ -50,7 +56,7 @@ async function completarAleatorias(): Promise<void> {
 }
 
 function filtrarAleatorias(categoria: string): void {
-    const apiService = new ApiService("https://www.themealdb.com/api/json/v1", "1");
+    const apiService = new ApiService();
     const viewService = new ViewService();
     const selectCategorias = document.getElementById('categorias') as HTMLSelectElement;
     let categoriaFiltrada: string = categoria;
@@ -74,7 +80,6 @@ function filtrarAleatorias(categoria: string): void {
         .catch(err => console.error(err));
 }
 
-
 function crearOchoAleatorios(max: number): number[] {
     const resultado: number[] = [];
 
@@ -87,7 +92,6 @@ function crearOchoAleatorios(max: number): number[] {
 
     return resultado;
 }
-
 
 function registrarUsuario(): void {
     console.log("Registrando usuario...");
@@ -134,7 +138,6 @@ function logearUsuario(): void {
     const storageService = new StorageService();
     const emailInput = document.getElementById("emailLogin") as HTMLInputElement | null;
     const passwordInput = document.getElementById("passwordLogin") as HTMLInputElement | null;
-    //TODO implementar guardar sesion
 
     if (emailInput && passwordInput) {
         const email = emailInput.value;
@@ -152,13 +155,13 @@ function logearUsuario(): void {
             };
             storageService.saveUserSession(authSession);
             console.log("Sesión de autenticación creada:", authSession);
-            window.location.href = "index.html";
+
+            window.location.reload();
         }
     } else {
         console.error("Credenciales incorrectas");
     }
 }
-
 
 function logoutUsuario(): void {
     console.log("Cerrando sesión de usuario...");
@@ -183,7 +186,7 @@ function saveCategory(): void {
             console.log(user);
         } else {
             console.log("Asignando nueva categoría favorita");
-            user.favoriteCategory = favoritaCont.value; 
+            user.favoriteCategory = favoritaCont.value;
             view.renderBtnFavorite(favoritaBtn)
             console.log(user);
             storage.saveUser(user);
@@ -199,21 +202,54 @@ function cargarFavoritos(): void {
     contenedor.innerHTML = "<p>No hay favoritos aun</p>";
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const archivo = window.location.pathname.split("/").pop();
-    const storage = new StorageService();
-    const view = new ViewService();
+async function cargarReceta(idMeal: number, view: ViewService) {
+    const api = new ApiService();
+    const receta = await api.getMealDetails(idMeal);
+    view.renderMeal(receta)
+}
+
+function pintarCabecera(storage: StorageService, view: ViewService) {
     const usuarioBtn = document.getElementById("usuarioBtn") as HTMLDivElement
     const cerrarSesionBtn = document.getElementById("cerrarSesionBtn") as HTMLDivElement
 
     if (storage.isSessionActive()) {
         view.renderBtnSessions(cerrarSesionBtn);
-        view.renderBtnSessions(usuarioBtn);
-        const btnCerrarSesion = document.getElementById("btnCerrarSesion") as HTMLButtonElement;
-        btnCerrarSesion.addEventListener("click", logoutUsuario);
+        view.renderBtnSessions(usuarioBtn)
+    }
+}
 
-        const btnSaveSession = document.getElementById("btnGuardar") as HTMLButtonElement;
-        btnSaveSession.addEventListener("click", saveCategory);
+function gestionarRutas(archivo: string) {
+    const storage = new StorageService();
+    const view = new ViewService();
+
+    pintarCabecera(storage, view);
+    const formulario = document.getElementById("formCrearUsuario") as HTMLFormElement;
+    formulario.addEventListener("submit", (event) => {
+        event.preventDefault();
+        registrarUsuario();
+    });
+
+    const formularioLogin = document.getElementById("formLoginUsuario") as HTMLFormElement;
+    formularioLogin.addEventListener("submit", (event) => {
+        event.preventDefault();
+        logearUsuario();
+    });
+
+    const btnCerrarSesion = document.getElementById("btnCerrarSesion") as HTMLButtonElement;
+    btnCerrarSesion.addEventListener("click", logoutUsuario);
+
+
+    if (archivo === "index.html") {
+        activarIndex(storage, view);
+    } else if (archivo === "receta.html") {
+        activarReceta(storage, view);
+    }
+}
+
+function activarIndex(storage: StorageService, view: ViewService) {
+    if (storage.isSessionActive()) {
+        const guardarBtn = document.getElementById("btnGuardar") as HTMLDivElement
+        view.renderBtnSessions(guardarBtn);
 
         const user = storage.getUserSession() as User;
         let categoria = user.favoriteCategory ?? "";
@@ -229,31 +265,92 @@ window.addEventListener('DOMContentLoaded', () => {
         completarCategorias(categoria);
 
     } else {
+        // const btnDetalles = document.getElementById("btnDetalles") as HTMLInputElement;
+        // console.log(btnDetalles);
+        // view.renderBtnSessions(btnDetalles);
         completarCategorias("");
         completarAleatorias();
     }
-
-
-
-
     const select: HTMLElement | null = document.getElementById("categorias");
     if (select !== null) {
         select.addEventListener("change", () => {
             filtrarAleatorias("");
         });
+
+        const btnSaveSession = document.getElementById("btnGuardar") as HTMLButtonElement;
+        btnSaveSession.addEventListener("click", saveCategory);
+
+    }
+}
+
+async function btnDetalles(view: ViewService){
+        const btnDetalles = document.getElementById("btnDetalles") as HTMLInputElement;
+        console.log(btnDetalles);
+        view.renderBtnSessions(btnDetalles);
+}
+
+function activarReceta(storage: StorageService, view: ViewService) {
+    const params = new URLSearchParams(window.location.search);
+    const datos = Object.fromEntries(params.entries());
+    let idMeal: number = Number(datos.id);
+
+    const user = storage.getUserSession() as User;
+    const userMeals = storage.getUserMeals(user.id);
+    let isSave = false;
+
+    const btnGuardarReceta = document.getElementById("btnGuardarReceta") as HTMLButtonElement;
+    const btnEliminarReceta = document.getElementById("btnEliminarReceta") as HTMLButtonElement;
+
+    userMeals.forEach(receta => {
+        if (receta.mealId === idMeal) {
+            isSave = true;
+        }
+    });
+
+    if (isSave) {
+        view.renderBtnSessions(btnGuardarReceta);
+        view.renderBtnSessions(btnEliminarReceta);
     }
 
-    const formulario = document.getElementById("formCrearUsuario") as HTMLFormElement;
-    formulario.addEventListener("submit", (event) => {
-        event.preventDefault();
-        registrarUsuario();
+    cargarReceta(idMeal, view);
+
+    btnGuardarReceta.addEventListener("click", () => {
+        guardarReceta(idMeal, storage, view)
     });
 
-    const formularioLogin = document.getElementById("formLoginUsuario") as HTMLFormElement;
-    formularioLogin.addEventListener("submit", (event) => {
-        event.preventDefault();
-        logearUsuario();
+    btnEliminarReceta.addEventListener("click", () => {
+        eliminarReceta(idMeal, storage, view)
     });
+
+}
+
+function guardarReceta(idMeal: number, storage: StorageService, view: ViewService) {
+    const user = storage.getUserSession() ?? null;
+
+    let userId = null;
+    if (user) {
+        userId = user.id;
+        const recetaGuardada: UserMeal = {
+            userId: userId,
+            mealId: idMeal,
+            saveDate: new Date(),
+            status: statusUserMeal.Todo,
+        }
+        storage.saveUserMeals(recetaGuardada)
+        view.renderBtnRecetas();
+    }
+};
+
+function eliminarReceta(idMeal: number, storage: StorageService, view: ViewService) {
+    storage.deleteUserMeals(idMeal);
+    view.renderBtnRecetas();
+}
+
+
+window.addEventListener('DOMContentLoaded', () => {
+    const archivo = window.location.pathname.split("/").pop() as string;
+
+    gestionarRutas(archivo);
 
 });
 
