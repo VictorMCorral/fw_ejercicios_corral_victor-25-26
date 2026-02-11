@@ -2,6 +2,7 @@ import { Component, inject, resource, signal } from '@angular/core';
 import { MyMeal } from '../../model/my-meal';
 import { ApiService } from '../../services/api-service';
 import { Category } from '../../model/category';
+import { StorageService } from '../../services/storage-service';
 
 @Component({
   selector: 'app-meals-category',
@@ -10,10 +11,12 @@ import { Category } from '../../model/category';
   styleUrl: './meals-category.css',
 })
 export class MealsCategory {
-
   private apiService = inject(ApiService);
+  private storageService = inject(StorageService);
+
+
   listaRecetas = signal<MyMeal[]>([]);
-  public isAuthenticated = true; // más adelante vendrá de un AuthService
+  public isAuthenticated = this.storageService.isSessionActive(); // más adelante vendrá de un AuthService
   categorias = signal<Category[]>([]);
 
 

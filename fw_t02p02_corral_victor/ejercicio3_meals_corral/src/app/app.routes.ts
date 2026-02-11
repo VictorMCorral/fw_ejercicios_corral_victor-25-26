@@ -5,6 +5,9 @@ import { Details } from './c_pages/details/details';
 import { PlanWeek } from './c_pages/plan-week/plan-week';
 import { Login } from './c_pages/login/login';
 import { NotFound } from './c_pages/not-found/not-found';
+import { StorageService } from './services/storage-service';
+import { inject } from '@angular/core/primitives/di';
+
 export const routes: Routes = [
   //Con layout
   {
@@ -18,6 +21,18 @@ export const routes: Routes = [
   },
   //Sin layot
   { path: 'login', component: Login },
+  {
+    path: 'logout',
+    redirectTo: () => {
+      const storageService = inject(StorageService);
+      // 1. Borramos el storage directamente aquí
+      storageService.clearSession();
+
+      // 2. Devolvemos la ruta a la que queremos redirigir
+      window.location.href = '/'; 
+      return '/';
+    }
+  },
   { path: '**', component: NotFound },
 ];
 
