@@ -30,10 +30,6 @@ export class ViewService {
                         <strong>País:</strong> ${receta.strArea}<br>
                         <strong>Ingredientes:</strong> ${ingredientesCount} diferentes
                     </p> 
-                    <form action="receta.html" method="GET" class="mb-4">
-                            <input type="hidden" name="id" value="${receta.idMeal}">
-                        <input type="submit" id="btnDetalles" value="Detalles >>" class="btn btn-outline-primary w-100 d-block">
-                    </form>
                 </div>
             </div>           
             `;

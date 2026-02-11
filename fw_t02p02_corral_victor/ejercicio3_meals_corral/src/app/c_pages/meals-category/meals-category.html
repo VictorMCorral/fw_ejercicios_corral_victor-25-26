@@ -1,0 +1,44 @@
+<h2>Categorías de Comidas</h2>
+<select class="form-select"
+        id="categorias"
+        (change)="onCategorieChange($event)">
+  <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
+  @for (categoria of categorias(); track $index) {
+  <option value="{{ categoria }}">{{ categoria }}</option>
+  }
+</select>
+
+<br>
+
+@if (listaRecetas().length > 0) {
+<h2>Recetas</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias">
+  @for (receta of listaRecetas(); track receta.idMeal) {
+  <div class="card" [id]="receta.idMeal">
+    <img [src]="receta.strMealThumb" class="card-img-top" [alt]="receta.strMeal" />
+
+    <div class="card-body">
+      <h5 class="card-title">{{ receta.strMeal }}</h5>
+
+      <p class="card-text">
+        <strong>Categoría:</strong> {{ receta.strCategory }}<br />
+        <strong>País:</strong> {{ receta.strArea }}<br />
+        <!-- Llamamos a una función o getter para contar ingredientes -->
+        <strong>Ingredientes:</strong> {{ receta.ingredients.length }} diferentes
+      </p>
+      @if(isAuthenticated === true){
+        <form action="details/{{ receta.idMeal }}" method="GET" class="mb-4">
+          <input type="submit" id="btnDetalles" value="Detalles >>" class="btn btn-outline-primary w-100 d-block">
+        </form>
+      }
+    </div>
+  </div>
+  } @empty {
+  <h3>Cargando 8 recetas aleatorias...</h3>}
+</div>
+}
+<!--
+  @else {
+  <h3>Cargando 8 recetas aleatorias...</h3>
+
+} -->

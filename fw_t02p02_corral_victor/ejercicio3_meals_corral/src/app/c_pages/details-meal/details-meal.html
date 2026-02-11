@@ -1,0 +1,34 @@
+<div class="mt-5 p-3" id="recipe-container">
+  <div class="row">
+    <div class="col-md-5">
+      <img class="img-fluid rounded shadow" id="recipe-img" src="{{ recetaSeleccionada()?.strMealThumb }}" alt="Imagen de la receta" />
+    </div>
+    <div class="col-md-5">
+      <h4>Categoría:
+        <span class="badge bg-primary" id="recipe-category">
+          {{ recetaSeleccionada()?.strCategory }}
+        </span>
+      </h4>
+      <h4>Origen:
+        <span class="badge bg-secondary" id="recipe-area">
+          {{ recetaSeleccionada()?.strArea }}
+        </span>
+      </h4>
+      <h3 class="mt-4">Ingredientes</h3>
+      <ul class="list-group list-group-flush" id="recipe-ingredients">
+         @for (ingrediente of recetaSeleccionada()?.ingredients; track recetaSeleccionada()?.ingredients) {
+          <li>
+            <h3>
+              {{ ingrediente.name }}
+            </h3>
+            <p>
+              {{ ingrediente.measure }}
+            </p>
+          </li>
+        }
+      </ul>
+      <button class="btn btn-outline-primary w-100" type="button" id="btnGuardarReceta">Guardar</button>
+      <button cl ass="btn btn-outline-danger w-100 d-none" type="button" id="btnEliminarReceta">Eliminar</button>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { InterfaceUser } from '../interfaces/interface-user';
 @Injectable({
   providedIn: 'root',
 })
+
 export class LocalStorageService {
   private readonly APPLICATIONS_KEY = 'application';
   private readonly USERS_KEY = 'users';
@@ -13,7 +14,6 @@ export class LocalStorageService {
   constructor() {
     this.initializeTestUsers();
   }
-
 
   saveApplication(application: InterfaceHouseForm): void {
     const applications = this.getAllApplications();
