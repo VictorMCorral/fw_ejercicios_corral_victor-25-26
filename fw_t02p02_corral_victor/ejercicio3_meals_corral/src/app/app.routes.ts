@@ -5,19 +5,30 @@ import { Details } from './c_pages/details/details';
 import { PlanWeek } from './c_pages/plan-week/plan-week';
 import { Login } from './c_pages/login/login';
 import { NotFound } from './c_pages/not-found/not-found';
+import { authGuard } from './auth-guard';
+
+
 export const routes: Routes = [
   //Con layout
   {
     path: '',
     component: Layout,
     children: [
-      { path: '', component: Home },
-      { path: 'details/:id', component: Details },
+      {
+        path: '',
+        component: Home
+      },
+      {
+        path: 'details/:id',
+        component: Details,
+        canActivate: [authGuard]
+      },
       { path: 'plan-week', component: PlanWeek },
     ],
   },
   //Sin layot
-  { path: 'login', component: Login },
+  { path: 'login', component: Login},
+  { path: 'logOut', component: Login },
   { path: '**', component: NotFound },
 ];
 

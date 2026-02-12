@@ -1,7 +1,5 @@
 <h2>Categorías de Comidas</h2>
-<select class="form-select"
-        id="categorias"
-        (change)="onCategorieChange($event)">
+<select class="form-select" id="categorias" (change)="onCategorieChange($event)">
   <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
   @for (categoria of categorias(); track $index) {
   <option value="{{ categoria }}">{{ categoria }}</option>
@@ -10,7 +8,25 @@
 
 <br>
 
-@if (listaRecetas().length > 0) {
+@if (cargando()) {
+  <!--TODO no carga bien -->
+<div class="loading-wrapper d-flex flex-column align-items-center justify-content-center py-5">
+  <!-- Texto con estilo -->
+  <div class="text-center">
+    <h2 class="loading-title">Cocinando tus recetas...</h2>
+    <p class="text-muted loading-subtitle">Buscando los mejores ingredientes para ti</p>
+  </div>
+
+  <!-- Contenedor de la animación -->
+  <div class="image-container mb-4">
+    <img src="Img/original-2592ea05b1d4d90b158edf08be665990.gif" alt="Cargando recetas"
+      class="img-fluid custom-loader">
+  </div>
+
+</div>
+}
+
+@if(listaRecetas().length > 0) {
 <h2>Recetas</h2>
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias">
   @for (receta of listaRecetas(); track receta.idMeal) {
@@ -26,10 +42,10 @@
         <!-- Llamamos a una función o getter para contar ingredientes -->
         <strong>Ingredientes:</strong> {{ receta.ingredients.length }} diferentes
       </p>
-      @if(isAuthenticated === true){
-        <form action="details/{{ receta.idMeal }}" method="GET" class="mb-4">
-          <input type="submit" id="btnDetalles" value="Detalles >>" class="btn btn-outline-primary w-100 d-block">
-        </form>
+      @if(authService){
+      <form action="details/{{ receta.idMeal }}" method="GET" class="mb-4">
+        <input type="submit" id="btnDetalles" value="Detalles >>" class="btn btn-outline-primary w-100 d-block">
+      </form>
       }
     </div>
   </div>
@@ -37,8 +53,3 @@
   <h3>Cargando 8 recetas aleatorias...</h3>}
 </div>
 }
-<!--
-  @else {
-  <h3>Cargando 8 recetas aleatorias...</h3>
-
-} -->

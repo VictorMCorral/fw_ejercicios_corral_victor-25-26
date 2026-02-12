@@ -1,8 +1,6 @@
 import { Component, inject, Input, input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DetailsMeal } from "../details-meal/details-meal";
-import { ApiService } from '../../services/api-service';
-import { MyMeal } from '../../model/my-meal';
 
 
 @Component({
@@ -15,7 +13,7 @@ import { MyMeal } from '../../model/my-meal';
 export class Details {
   public isAuthenticated = true; // más adelante vendrá de un AuthService
 
-  idReceta: number | null = null;
+  idReceta: number =0;
 
   constructor(private route: ActivatedRoute) { }
 

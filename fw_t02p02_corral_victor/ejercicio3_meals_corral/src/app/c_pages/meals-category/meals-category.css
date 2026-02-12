@@ -1,0 +1,47 @@
+/* Contenedor principal para que ocupe espacio visual */
+.loading-wrapper {
+  min-height: 400px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Estilo de la imagen (GIF) */
+.custom-loader {
+  max-width: 180px;
+  border-radius: 50%; /* Si el gif es cuadrado, esto lo hace circular */
+  border: 4px solid #f8f9fa;
+  transition: transform 0.3s ease;
+}
+
+.custom-loader:hover {
+  transform: scale(1.05);
+}
+
+/* Tipografía */
+.loading-title {
+  font-family: 'Playfair Display', serif; /* O una fuente elegante que tengas */
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.loading-subtitle {
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* Animación de entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Efecto de latido sutil al texto */
+.loading-title {
+  animation: pulseText 2s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

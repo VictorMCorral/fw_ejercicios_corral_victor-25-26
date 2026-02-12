@@ -2,6 +2,7 @@ import { Component, inject, resource, signal } from '@angular/core';
 import { MyMeal } from '../../model/my-meal';
 import { ApiService } from '../../services/api-service';
 import { Category } from '../../model/category';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-meals-category',
@@ -10,11 +11,13 @@ import { Category } from '../../model/category';
   styleUrl: './meals-category.css',
 })
 export class MealsCategory {
-
   private apiService = inject(ApiService);
+  authService = inject(AuthService).sessionActive();
+
   listaRecetas = signal<MyMeal[]>([]);
   public isAuthenticated = true; // más adelante vendrá de un AuthService
   categorias = signal<Category[]>([]);
+  cargando = signal<boolean>(false);
 
 
   recetaCargada: MyMeal | null = null;
@@ -50,6 +53,7 @@ export class MealsCategory {
     let recetas : MyMeal[] | null = null;
     if (this.categoriaSeleccionada === "") {
       recetas =  await this.apiService.get8RandomMeals()
+      this.cargando.set(true);
     } else {
       recetas = await this.apiService.getMealsByCategory(category);
     }

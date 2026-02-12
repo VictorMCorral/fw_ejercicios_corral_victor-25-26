@@ -1,4 +1,13 @@
-<a routerLink="/login" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2">
-  <i class="bi bi-person-circle"></i>
-  <span>Login</span>
-</a>
+@if(!authService.sessionActive()){
+  <!--No tiene sentido el login aqui-->
+  <a routerLink="/login" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2">
+    <i class="bi bi-person-circle"></i>
+    <span>Login</span>
+  </a>
+} @else {
+  <a (click)="onLogout()" class="btn btn-outline-light btn-sm d-flex align-items-center gap-2">
+    <i class="bi bi-person-circle"></i>
+    <span>LogOut</span>
+  </a>
+}
+

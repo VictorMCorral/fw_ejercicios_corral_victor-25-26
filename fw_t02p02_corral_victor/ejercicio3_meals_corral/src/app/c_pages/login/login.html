@@ -26,16 +26,16 @@
         <!-- LOGIN -->
         <div class="tab-pane fade show active" id="login" role="tabpanel">
 
-          <form>
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
             <div class="mb-3">
               <label for="email" class="form-label">Correo electrónico</label>
-              <input type="email" id="email" name="email" class="form-control"
+              <input type="email" id="email"  formControlName="email" class="form-control"
                 placeholder="usuario@educastillalamancha.es">
             </div>
 
             <div class="mb-4">
               <label for="password" class="form-label">Contraseña</label>
-              <input type="password" id="password" name="password" class="form-control" placeholder="********">
+              <input type="password" id="password"  formControlName="password" class="form-control" placeholder="********">
             </div>
 
             <div class="d-grid">
@@ -48,26 +48,103 @@
 
         <!-- REGISTER -->
         <div class="tab-pane fade text-center" id="register" role="tabpanel">
-          <form id="formCrearUsuario">
+
+          <!-- Mensaje de éxito que oculta el formulario de registro-->
+          @if (registroExitoso) {
+          <div class="alert alert-success text-center" role="alert">
+            <h5 class="alert-heading">¡Usuario creado correctamente!</h5>
+            <p class="mb-3">Tu cuenta ha sido registrada con éxito.</p>
+            <button type="button" class="btn btn-success" (click)="irALogin()">
+              Ir al Login
+            </button>
+          </div>
+          }
+
+          <!-- Formulario de registro -->
+          @if (!registroExitoso) {
+          @if (errorRegistro) {
+          <div class="alert alert-danger" role="alert">
+            {{ errorRegistro }}
+          </div>
+          }
+
+          <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
+
+            <!-- Nombre completo -->
             <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="nombre" placeholder="Ingresa tu nombre">
+              <label for="nombreCompleto" class="form-label">Nombre completo</label>
+              <input type="text" id="nombreCompleto" formControlName="nombreCompleto" class="form-control"
+                [ngClass]="getValidationClass(nombreCompleto)" placeholder="Nombre y apellidos">
+
+              @if (nombreCompleto?.errors) {
+              <div class="invalid-feedback">
+                El nombre es obligatorio y debe tener al menos 3 caracteres
+              </div>
+              }
+              <div class="valid-feedback">¡Correcto!</div>
             </div>
+
+            <!-- Email -->
             <div class="mb-3">
-              <label for="emailCrear" class="form-label">Email</label>
-              <input type="email" class="form-control" id="emailCrear" placeholder="Ingresa tu email">
+              <label for="registerEmail" class="form-label">Correo electrónico</label>
+              <input type="email" id="registerEmail" formControlName="email" class="form-control"
+                [ngClass]="getValidationClass(email)" placeholder="usuario@educastillalamancha.es">
+
+              @if (email?.errors) {
+              <div class="invalid-feedback">
+                @if (email?.errors?.['emailDuplicado']) {
+                <div>Este correo ya está registrado</div>
+                } @else {
+                <div>Debe ser un correo válido del dominio @educastillalamancha.es</div>
+                }
+              </div>
+              }
+              <div class="valid-feedback">¡Correcto!</div>
             </div>
+
+            <!-- Password -->
             <div class="mb-3">
-              <label for="passwordCrear" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="passwordCrear" placeholder="Ingresa tu contraseña">
+              <label for="registerPassword" class="form-label">Contraseña</label>
+              <input type="password" id="registerPassword" formControlName="password" class="form-control"
+                [ngClass]="getValidationClass(password)" placeholder="********">
+
+              @if (password?.errors) {
+              <div class="invalid-feedback">
+                La contraseña es obligatoria y debe tener al menos 3 caracteres
+              </div>
+              }
+              <div class="valid-feedback">¡Correcto!</div>
             </div>
+
+            <!-- Confirmar Password -->
             <div class="mb-3">
-              <label for="passwordComprobar" class="form-label">Repite la contraseña</label>
-              <input type="password" class="form-control" id="passwordComprobar" placeholder="Ingresa tu contraseña">
+              <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+              <input type="password" id="confirmPassword" formControlName="confirmPassword" class="form-control"
+                [ngClass]="getValidationClassConfirmPassword()" placeholder="********">
+
+              @if (confirmPassword?.errors || registerForm.errors?.['passwordsNoCoinciden']) {
+              <div class="invalid-feedback">
+                @if (registerForm.errors?.['passwordsNoCoinciden']) {
+                <div>Las contraseñas no coinciden</div>
+                } @else {
+                <div>Debes confirmar la contraseña de al menos 3 caracteres</div>
+                }
+              </div>
+              }
+
+              <div class="valid-feedback">¡Las contraseñas coinciden!</div>
             </div>
-            <button type="submit" class="btn btn-primary">Crear usuario</button>
+
+            <!-- Botón submit -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                Registrarse
+              </button>
+            </div>
           </form>
+          }
         </div>
+
 
       </div>
     </div>
