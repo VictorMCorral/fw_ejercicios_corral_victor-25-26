@@ -22,6 +22,7 @@ export class HousingService {
   ): void {
     // Crear el objeto de consulta
     const apply: InterfaceHouseForm = {
+      id: 0,
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -30,7 +31,7 @@ export class HousingService {
     };
 
     // Guardar en localStorage
-    this.LocalstorageService.saveApplication(apply);
+    this.LocalstorageService.saveV2Application(apply);
 
     console.log('Consulta guardada:', apply);
     alert('Appy sent successfully!');

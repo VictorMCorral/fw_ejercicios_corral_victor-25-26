@@ -53,10 +53,10 @@ describe('App', () => {
     // Forzamos el error con la siguiente linea
     // app.subTitle.set('IES Gregorio Prieto');
 
-    console.log('>>>Privado:', app['title']());
-    console.log('>>>Publico:', app.subTitle());
-    console.log('>>>Publico:', app.year);
-    console.log('>>>Publico:', app.showTitleAndsubTitle());
+    // console.log('>>>Privado:', app['title']());
+    // console.log('>>>Publico:', app.subTitle());
+    // console.log('>>>Publico:', app.year);
+    // console.log('>>>Publico:', app.showTitleAndsubTitle());
 
     expect(app.year).toBe(new Date().getFullYear());
     expect(app['title']()).toBe('mi_app_03');
@@ -78,7 +78,7 @@ describe('App', () => {
     const app = fixture.componentInstance;
     const compiled = fixture.nativeElement as HTMLElement;
 
-    console.log('>>>Render:', compiled.innerHTML);
+    // console.log('>>>Render:', compiled.innerHTML);
 
     // router-outlet existe
     const routerOutlet = compiled.querySelector('router-outlet');
@@ -86,9 +86,9 @@ describe('App', () => {
 
     // router-outlet está dentro de section.content
     const contentSection = compiled.querySelector('section.content');
-    console.log('>>>Render section.content:', contentSection?.innerHTML);
-    console.log('>>>Render class section.content:',
-      contentSection?.classList.value);
+    // console.log('>>>Render section.content:', contentSection?.innerHTML);
+    // console.log('>>>Render class section.content:',
+    //   contentSection?.classList.value);
 
     expect(contentSection).toBeTruthy();
     expect(contentSection?.querySelector('router-outlet')).toBeTruthy();

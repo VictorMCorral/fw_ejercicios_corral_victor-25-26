@@ -3,6 +3,7 @@ import { Home } from './home/home';
 import { Details } from './details/details';
 import { Login } from './login/login';
 import { authGuard } from './guards/auth-guard';
+import { Apply } from './apply/apply';
 
 export const routes: Routes = [
   {
@@ -22,5 +23,12 @@ export const routes: Routes = [
     title: 'Home details',
     canActivate: [authGuard],
   },
+  {
+    path: 'apply',
+    component: Apply,
+    title: 'Apply',
+    canActivate: [authGuard],
+  },
+
 ];
 

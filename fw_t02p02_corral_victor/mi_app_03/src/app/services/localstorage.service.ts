@@ -15,11 +15,26 @@ export class LocalStorageService {
     this.initializeTestUsers();
   }
 
-  saveApplication(application: InterfaceHouseForm): void {
+  // saveApplication(application: InterfaceHouseForm): void {
+  //   const applications = this.getAllApplications();
+  //   applications.push(application);
+  //   localStorage.setItem(this.APPLICATIONS_KEY, JSON.stringify(applications));
+  // }
+
+  setAllApplications(applications: InterfaceHouseForm[]): void {
+    localStorage.setItem(this.APPLICATIONS_KEY, JSON.stringify(applications));
+  }
+  saveV2Application(application: InterfaceHouseForm): void {
     const applications = this.getAllApplications();
+
+    //siempre insertamos al final:
+    const nextId = applications.length === 0 ? 1 : applications[applications.length - 1].id + 1;
+
+    application.id = nextId;
     applications.push(application);
     localStorage.setItem(this.APPLICATIONS_KEY, JSON.stringify(applications));
   }
+
 
   getAllApplications(): InterfaceHouseForm[] {
     const data = localStorage.getItem(this.APPLICATIONS_KEY);
