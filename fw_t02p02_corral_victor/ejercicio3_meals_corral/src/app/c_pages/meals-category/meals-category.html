@@ -2,14 +2,23 @@
 <select class="form-select" id="categorias" (change)="onCategorieChange($event)">
   <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
   @for (categoria of categorias(); track $index) {
-  <option value="{{ categoria }}">{{ categoria }}</option>
+  <option value="{{ categoria }}" [selected]="categoriaSeleccionada() === categoria">{{ categoria }}</option>
   }
 </select>
 
 <br>
 
+@if(isAuthenticated()){
+<button (click)="saveCategory()"
+  [class]="categoriaGuardar()" type="button" id="btnGuardarCategoria"
+  [disabled]='categoriaSeleccionada() === ""'>Guardar Categoría
+</button>
+}
+
+<br>
+<br>
+
 @if (cargando()) {
-  <!--TODO no carga bien -->
 <div class="loading-wrapper d-flex flex-column align-items-center justify-content-center py-5">
   <!-- Texto con estilo -->
   <div class="text-center">
@@ -19,14 +28,11 @@
 
   <!-- Contenedor de la animación -->
   <div class="image-container mb-4">
-    <img src="Img/original-2592ea05b1d4d90b158edf08be665990.gif" alt="Cargando recetas"
-      class="img-fluid custom-loader">
+    <img src="Img/original-2592ea05b1d4d90b158edf08be665990.gif" alt="Cargando recetas" class="img-fluid custom-loader">
   </div>
 
 </div>
-}
-
-@if(listaRecetas().length > 0) {
+} @else {
 <h2>Recetas</h2>
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias">
   @for (receta of listaRecetas(); track receta.idMeal) {
@@ -42,14 +48,20 @@
         <!-- Llamamos a una función o getter para contar ingredientes -->
         <strong>Ingredientes:</strong> {{ receta.ingredients.length }} diferentes
       </p>
-      @if(authService){
-      <form action="details/{{ receta.idMeal }}" method="GET" class="mb-4">
-        <input type="submit" id="btnDetalles" value="Detalles >>" class="btn btn-outline-primary w-100 d-block">
-      </form>
+      @if(isAuthenticated()){
+
+      <div class="d-flex gap-2">
+        <form action="details/{{ receta.idMeal }}" method="GET" class="flex-fill">
+          <input type="submit" value="Detalles" class="btn btn-outline-primary w-100">
+        </form>
+        <button (click)="saveCategory()" class="btn btn-outline-primary flex-fill" type="button">
+          Guardar
+        </button>
+      </div>
+
       }
     </div>
   </div>
-  } @empty {
-  <h3>Cargando 8 recetas aleatorias...</h3>}
+  }
 </div>
 }

@@ -15,7 +15,6 @@ export class DetailsMeal {
   idReceta = input.required<number>();
 
   ngOnInit(){
-    console.log("-----------" + this.idReceta())
     this.obtenerReceta();
   }
 
@@ -23,7 +22,6 @@ export class DetailsMeal {
     const receta: MyMeal | null = await this.apiService.getMealDetails(this.idReceta());
     if (receta !== null){
       this.recetaSeleccionada.set(receta);
-      console.log(receta)
     }
   }
 }

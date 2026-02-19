@@ -11,10 +11,10 @@ import { AuthSession } from '../model/auth-session';
 export class AuthService {
   private localStorageService = inject(StorageService);
 
-  sessionActive = signal(this.checkInitialSession());
+  sessionActive = signal(this.isSessionActive());
 
 
-  checkInitialSession(): boolean {
+  isSessionActive(): boolean {
     return this.localStorageService.isSessionActive();
   }
 

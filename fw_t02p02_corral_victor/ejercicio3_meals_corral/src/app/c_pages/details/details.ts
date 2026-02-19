@@ -1,11 +1,12 @@
 import { Component, inject, Input, input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DetailsMeal } from "../details-meal/details-meal";
+import { DetailsSave } from "../details-save/details-save";
 
 
 @Component({
   selector: 'app-details',
-  imports: [DetailsMeal],
+  imports: [DetailsMeal, DetailsSave],
   templateUrl: './details.html',
   styleUrl: './details.css',
 })

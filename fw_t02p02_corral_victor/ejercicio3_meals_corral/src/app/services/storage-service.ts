@@ -37,6 +37,17 @@ private static USER_KEY: string = "users";
         localStorage.setItem(StorageService.USER_KEY, JSON.stringify(users));
     }
 
+    saveCategory(Category: string){
+        const usuario: User | null= this.getUserSession();
+        if(usuario){
+          if(usuario.favoriteCategory === Category){
+            delete usuario.favoriteCategory;
+          } else {
+            usuario.favoriteCategory = Category;
+          }
+          this.saveUser(usuario);
+        }
+    }
     registerUser(user: User): boolean {
         const users = (this.getLocalStorage(StorageService.USER_KEY) as User[]) ?? [];
         const index = users.findIndex(u => u.id === user.id);

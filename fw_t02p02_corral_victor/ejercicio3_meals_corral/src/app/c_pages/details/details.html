@@ -1,8 +1,5 @@
 <app-details-meal [idReceta]="idReceta"></app-details-meal>
 
 @if(isAuthenticated) {
-  <div class="details-container">
-    <h1>Detalles de la receta</h1>
-    <p>Aquí se mostrarán los detalles de la receta seleccionada.</p>
-  </div>
+  <app-details-save [idReceta]="idReceta"></app-details-save>
 }
