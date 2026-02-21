@@ -11,6 +11,7 @@ export class StorageService {
   private static USER_KEY: string = "users";
   private static USER_KEY_ITEM: string = "authSession";
   private static USER_MEAL_KEY_ITEM: string = "userMeals_";
+  private static USER_WEEKLYPALNS_KEY: string = "weeklyPlans_";
 
   getLocalStorage(key: string) {
     const storage = localStorage.getItem(key) ?? null;
@@ -113,18 +114,18 @@ export class StorageService {
     return user;
   }
 
-  //TODO estamos con las recetas
   saveUserMeals(meal: UserMeal) {
     console.log(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`);
     const storage = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`) as UserMeal[];
-    if (storage) {
-      storage.push(meal);
-      localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`, JSON.stringify(storage));
+    const index = storage.findIndex(item => item.mealId === meal.mealId);
+
+    if (index !== -1) {
+      storage[index] = meal;
     } else {
-      const nueva: UserMeal[] = [meal];
-      localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`, JSON.stringify(nueva));
+      storage.push(meal);
     }
 
+    localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`, JSON.stringify(storage));
   }
 
   existsMealsInUser(id: number, idMeal: number): boolean {
@@ -134,9 +135,7 @@ export class StorageService {
       meals.forEach(meal => {
         if (meals) {
           meals.forEach(meal => {
-            console.log(meal);
             if (meal.mealId === idMeal) {
-              console.log("Meals id = " + meal.mealId)
               encontrada = true;
             }
           });
@@ -148,6 +147,20 @@ export class StorageService {
 
   getUserMeals(id: number): UserMeal[] {
     return this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${id}`) as UserMeal[] ?? null;
+  }
+
+  getUserMealById(id: number): UserMeal | null {
+    const user = this.getUserSession();
+    let userMeal: UserMeal | null = null;
+    if (user) {
+      const userMeals = this.getUserMeals(user.id);
+      if (userMeals) {
+        userMeals.forEach(userMealInUser => {
+          if (userMealInUser.mealId == id) userMeal = userMealInUser;
+        });
+      }
+    }
+    return userMeal;
   }
 
   deleteUserMeals(idmeal: number) {
@@ -164,6 +177,38 @@ export class StorageService {
       localStorage.removeItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`)
     }
   }
+
+  //TODO falta crear los accesos de week-plan
+// Ejemplo
+//  KEY: `${StorageService.USER_WEEKLYPALNS_KEY}${user.id}`
+//   [{
+//      "id": "2026-W02",
+//      "userId": 56,
+//      "days":
+//      [
+//       {"day": "lunes"},
+//       {"day": "martes"},
+//       {"day": "miércoles"},
+//       {"day": "jueves"},
+//       {"day": "viernes"},
+//       {"day": "sábado"},
+//       {"day": "domingo", "dinnerMealId": 52819}
+//     ]
+//   },{
+//     "id": "2026-W03",
+//      "userId": 56,
+//      "days":
+//      [
+//       {"day": "lunes", "lunchMealId": 52772, "dinnerMealId": 52819},
+//       {"day": "martes", "lunchMealId": 52944, "dinnerMealId": 53026},
+//       {"day": "miércoles"},
+//       {"day": "jueves"},
+//       {"day": "viernes"},
+//       {"day": "sábado"},
+//       {"day": "domingo"}
+//     ]
+//   }
+// ]
 
 
 }

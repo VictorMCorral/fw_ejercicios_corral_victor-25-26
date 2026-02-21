@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MealsCategory } from '../meals-category/meals-category';
 import { MealsSave } from '../meals-save/meals-save';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +10,14 @@ import { MealsSave } from '../meals-save/meals-save';
   styleUrl: './home.css',
 })
 export class Home {
-  
-  public isAuthenticated = false; // más adelante vendrá de un AuthService
+  private authService = inject(AuthService);
+  public isAuthenticated = this.authService.sessionActive;
+  public saveChanges = signal<number>(0);
+
+
+  actualizarFavoritos() {
+    let valorAnterior = this.saveChanges();
+    valorAnterior ++;
+    this.saveChanges.set(valorAnterior);
+  }
 }

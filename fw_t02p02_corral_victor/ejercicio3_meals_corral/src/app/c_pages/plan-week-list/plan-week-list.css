@@ -1,0 +1,34 @@
+
+  /* Mantiene las columnas iguales sin importar el texto */
+  .plan-table {
+    table-layout: fixed;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* El color amarillento suave para el día actual o seleccionado */
+  .bg-highlight {
+    background-color: #fffbeb !important; /* Un crema muy sutil */
+    border-left: 2px solid #fde68a !important;
+    border-right: 2px solid #fde68a !important;
+  }
+
+  /* Estilo para las celdas vacías */
+  .placeholder-recipe {
+    background-color: rgba(0,0,0,0.02);
+    border-style: dashed !important;
+    font-style: italic;
+  }
+
+  /* Quitar bordes externos redundantes de la tabla */
+  .table-responsive.border {
+    border-color: #f1f3f5 !important;
+    border-radius: 12px;
+  }
+
+  /* Efecto hover suave en las filas */
+  .plan-table tbody tr:hover {
+    background-color: #fafafa;
+  }
+

@@ -23,11 +23,15 @@ export const routes: Routes = [
         component: Details,
         canActivate: [authGuard]
       },
-      { path: 'plan-week', component: PlanWeek },
+      {
+        path: 'plan-week',
+        component: PlanWeek,
+        canActivate: [authGuard]
+      },
     ],
   },
   //Sin layot
-  { path: 'login', component: Login},
+  { path: 'login', component: Login },
   { path: 'logOut', component: Login },
   { path: '**', component: NotFound },
 ];

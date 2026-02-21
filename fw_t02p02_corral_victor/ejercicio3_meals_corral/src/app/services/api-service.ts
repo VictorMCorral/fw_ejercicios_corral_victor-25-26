@@ -46,6 +46,19 @@ export class ApiService {
     return meals.length > 0 ? meals : null;
   }
 
+  async getMultipleMeals(id: number[]): Promise<MyMeal[] | null>{
+    let meals: MyMeal[] = [];
+    for (let i = 0; i < id.length; i++) {
+      const meal = await this.getMealDetails(id[i]);
+      if (meal) {
+        meals.push(meal);
+      }
+    }
+
+    if (meals.length === 0) return null;
+    return meals.length > 0 ? meals : null;
+  }
+
   async getMealDetails(idMeal: number): Promise<MyMeal | null> {
     let receta: MyMeal | null = null;
     try {

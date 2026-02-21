@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './plan-week-list.css',
 })
 export class PlanWeekList {
-
+  //TODO meter toda logica de listar plan semanal
 }

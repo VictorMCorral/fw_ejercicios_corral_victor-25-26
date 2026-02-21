@@ -1,5 +1,16 @@
-<app-meals-category></app-meals-category>
+<div class="min-h-screen bg-gray-50 p-6 md:p-12">
 
-@if (isAuthenticated) {
-  <app-meals-save></app-meals-save>
-}
+  <section class="max-w-7xl mx-auto space-y-12">
+    <app-meals-category (saveMealsChangeOutput)="actualizarFavoritos()"></app-meals-category>
+
+    <br><br>
+
+    @if (isAuthenticated()) {
+      <div class="pt-8 border-t border-gray-200">
+        <app-meals-save [saveChanges]="saveChanges()"></app-meals-save>
+      </div>
+    }
+
+
+  </section>
+</div>

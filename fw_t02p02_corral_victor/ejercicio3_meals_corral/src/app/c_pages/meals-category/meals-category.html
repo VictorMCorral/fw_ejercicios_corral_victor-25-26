@@ -1,67 +1,97 @@
-<h2>Categorías de Comidas</h2>
-<select class="form-select" id="categorias" (change)="onCategorieChange($event)">
-  <option value="" selected="selected" disabled="disabled">Todas las categorias</option>
-  @for (categoria of categorias(); track $index) {
-  <option value="{{ categoria }}" [selected]="categoriaSeleccionada() === categoria">{{ categoria }}</option>
-  }
-</select>
-
-<br>
-
-@if(isAuthenticated()){
-<button (click)="saveCategory()"
-  [class]="categoriaGuardar()" type="button" id="btnGuardarCategoria"
-  [disabled]='categoriaSeleccionada() === ""'>Guardar Categoría
-</button>
-}
-
-<br>
-<br>
-
-@if (cargando()) {
-<div class="loading-wrapper d-flex flex-column align-items-center justify-content-center py-5">
-  <!-- Texto con estilo -->
-  <div class="text-center">
-    <h2 class="loading-title">Cocinando tus recetas...</h2>
-    <p class="text-muted loading-subtitle">Buscando los mejores ingredientes para ti</p>
-  </div>
-
-  <!-- Contenedor de la animación -->
-  <div class="image-container mb-4">
-    <img src="Img/original-2592ea05b1d4d90b158edf08be665990.gif" alt="Cargando recetas" class="img-fluid custom-loader">
-  </div>
-
-</div>
-} @else {
-<h2>Recetas</h2>
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" id="ochoAleatorias">
-  @for (receta of listaRecetas(); track receta.idMeal) {
-  <div class="card" [id]="receta.idMeal">
-    <img [src]="receta.strMealThumb" class="card-img-top" [alt]="receta.strMeal" />
-
-    <div class="card-body">
-      <h5 class="card-title">{{ receta.strMeal }}</h5>
-
-      <p class="card-text">
-        <strong>Categoría:</strong> {{ receta.strCategory }}<br />
-        <strong>País:</strong> {{ receta.strArea }}<br />
-        <!-- Llamamos a una función o getter para contar ingredientes -->
-        <strong>Ingredientes:</strong> {{ receta.ingredients.length }} diferentes
-      </p>
-      @if(isAuthenticated()){
-
-      <div class="d-flex gap-2">
-        <form action="details/{{ receta.idMeal }}" method="GET" class="flex-fill">
-          <input type="submit" value="Detalles" class="btn btn-outline-primary w-100">
-        </form>
-        <button (click)="saveCategory()" class="btn btn-outline-primary flex-fill" type="button">
-          Guardar
-        </button>
+<div class="category-container py-4">
+  <!-- Sección de Cabecera: Selector y Botón -->
+  <div class="header-card p-4 mb-5 shadow-sm">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-8">
+        <label for="categorias" class="form-label fw-bold text-muted small px-1">BUSCAR POR CATEGORÍA</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </span>
+          <select class="form-select custom-select border-start-0 ps-0" id="categorias" (change)="onCategorieChange($event)">
+            <option value="" selected disabled>Elige una opción...</option>
+            @for (categoria of categorias(); track $index) {
+            <option [value]="categoria" [selected]="categoriaSeleccionada() === categoria">{{ categoria }}</option>
+            }
+          </select>
+        </div>
       </div>
 
+      @if(isAuthenticated()){
+      <div class="col-12 col-md-4">
+        <button (click)="saveCategory()"
+                [class]="categoriaGuardar() + ' py-2-5 fw-bold shadow-sm'"
+                type="button"
+                id="btnGuardarCategoria"
+                [disabled]='categoriaSeleccionada() === ""'>
+          <i class="bi bi-star-fill me-2"></i>Fijar Categoría
+        </button>
+      </div>
       }
     </div>
   </div>
+
+  @if (cargando()) {
+  <div class="loading-wrapper d-flex flex-column align-items-center justify-content-center py-5">
+    <div class="text-center">
+      <h2 class="loading-title fw-bold">Cocinando tus recetas...</h2>
+      <p class="text-muted loading-subtitle">Buscando los mejores ingredientes para ti</p>
+    </div>
+    <div class="image-container mt-4">
+      <img src="Img/original-2592ea05b1d4d90b158edf08be665990.gif" alt="Cargando" class="custom-loader">
+    </div>
+  </div>
+  }
+
+  @else {
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <div class="title-decorator"></div>
+    <h2 class="fw-bold m-0 section-title">Recetas Disponibles</h2>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="ochoAleatorias">
+    @for (receta of listaRecetas(); track receta.idMeal) {
+    <div class="col">
+      <div class="card h-100 recipe-card border-0 shadow-sm" [id]="receta.idMeal">
+
+        <div class="card-img-container">
+          <img [src]="receta.strMealThumb" class="card-img-top" [alt]="receta.strMeal" />
+          <div class="card-badge">{{ receta.strArea }}</div>
+        </div>
+
+        <div class="card-body d-flex flex-column p-3">
+          <h5 class="card-title fw-bold text-dark mb-2">{{ receta.strMeal }}</h5>
+
+          <div class="card-info flex-grow-1">
+            <p class="card-text mb-1 text-muted small">
+              <strong>Categoría:</strong> {{ receta.strCategory }}
+            </p>
+            <p class="card-text mb-3">
+              <span class="badge rounded-pill bg-soft-success text-success">
+                {{ receta.ingredients.length }} ingredientes
+              </span>
+            </p>
+          </div>
+
+          @if(isAuthenticated()){
+          <div class="d-flex gap-2 mt-auto">
+            <a href="details/{{ receta.idMeal }}"
+              class="btn btn-outline-primary btn-sm rounded flex-fill fw-bold py-2">
+              Detalles
+            </a>
+            <button (click)="saveMeal( receta.idMeal )"
+              class="btn btn-outline-success btn-sm rounded flex-fill fw-bold py-2"
+              type="button">
+              Guardar
+            </button>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
   }
 </div>
-}
