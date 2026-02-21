@@ -1,6 +1,5 @@
 import { Component, inject, signal, input } from '@angular/core';
-import { ApiService } from '../../services/api-service';
-import { MyMeal } from '../../model/my-meal';
+import { User } from '../../model/user';
 @Component({
   selector: 'app-details-save',
   imports: [],
@@ -11,9 +10,20 @@ import { MyMeal } from '../../model/my-meal';
 
 export class DetailsSave {
   idReceta = input.required<number>();
+  user = input<User | null>();
+  qHacerla = signal<boolean>(true);
+  hecha = signal<boolean>(!this.qHacerla());
+
+
 
   ngOnInit() {
     console.log("-----------" + this.idReceta())
+
   }
 
+
+  //TODO revisar funcionamiento
+  onChangeObjetive(esHecha: boolean){
+    this.qHacerla.set(esHecha);
+  }
 }
