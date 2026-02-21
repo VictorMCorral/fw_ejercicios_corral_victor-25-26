@@ -111,6 +111,5 @@ export class DetailsSave {
     userMealSave.saveDate = new Date();
     this.storageService.saveUserMeals(userMealSave);
     this.userMeal.set(userMealSave);
-
   }
 }
