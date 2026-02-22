@@ -1,34 +1,32 @@
+.meal-title {
+  /* Configuración para multilínea (Line Clamp) */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;           /* Número de líneas exactas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;         /* Puntos suspensivos si pasa de 2 líneas */
 
-  /* Mantiene las columnas iguales sin importar el texto */
-  .plan-table {
-    table-layout: fixed;
-    min-width: 900px;
-    border-collapse: separate;
-    border-spacing: 0;
-  }
+  /* Estilo visual */
+  font-size: 0.75rem;
+  line-height: 1.2;                /* Espaciado entre líneas */
+  height: 2.4em;                   /* Altura fija (line-height * 2) para que las celdas no salten */
+  text-decoration: none;
+  font-weight: 600;
+  color: #0d6efd;
+  margin-top: 5px;
+  word-break: break-word;          /* Romper palabras largas si es necesario */
+}
 
-  /* El color amarillento suave para el día actual o seleccionado */
-  .bg-highlight {
-    background-color: #fffbeb !important; /* Un crema muy sutil */
-    border-left: 2px solid #fde68a !important;
-    border-right: 2px solid #fde68a !important;
-  }
+.meal-title:hover {
+  color: #004dc0;
+  text-decoration: underline;
+}
 
-  /* Estilo para las celdas vacías */
-  .placeholder-recipe {
-    background-color: rgba(0,0,0,0.02);
-    border-style: dashed !important;
-    font-style: italic;
-  }
-
-  /* Quitar bordes externos redundantes de la tabla */
-  .table-responsive.border {
-    border-color: #f1f3f5 !important;
-    border-radius: 12px;
-  }
-
-  /* Efecto hover suave en las filas */
-  .plan-table tbody tr:hover {
-    background-color: #fafafa;
-  }
-
+/* Ajuste opcional para la imagen para que todo encaje */
+.recipe-card img {
+  width: 100%;
+  max-width: 70px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 8px;
+}

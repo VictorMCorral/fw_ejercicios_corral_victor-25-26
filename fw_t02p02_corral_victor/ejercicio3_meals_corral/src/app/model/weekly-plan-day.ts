@@ -1,4 +1,4 @@
-type DayList =
+export type DayList =
     | "lunes"
     | "martes"
     | "miercoles"

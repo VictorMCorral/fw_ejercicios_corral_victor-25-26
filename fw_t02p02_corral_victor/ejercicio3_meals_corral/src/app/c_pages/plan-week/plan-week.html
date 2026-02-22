@@ -1,6 +1,6 @@
 <div class="container">
-  <app-plan-week-create></app-plan-week-create>
+  <app-plan-week-create (createWeeklyPlan)="updateWeeklyPlans()"></app-plan-week-create>
   <hr>
 
-  <app-plan-week-list></app-plan-week-list>
+  <app-plan-week-list [weeklyPlanCreate]="weeklyPlanCreate()"></app-plan-week-list>
 </div>

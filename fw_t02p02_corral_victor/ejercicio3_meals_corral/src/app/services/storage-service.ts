@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { User } from '../model/user';
 import { UserMeal } from '../model/user-meal';
 import { AuthSession } from '../model/auth-session';
+import { WeeklyPlanDay, DayList } from '../model/weekly-plan-day';
+import { WeeklyPlan, WeeklyPlanId } from '../model/weekly-plan';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +13,7 @@ export class StorageService {
   private static USER_KEY: string = "users";
   private static USER_KEY_ITEM: string = "authSession";
   private static USER_MEAL_KEY_ITEM: string = "userMeals_";
-  private static USER_WEEKLYPALNS_KEY: string = "weeklyPlans_";
+  private static USER_WEEKLYPLANS_KEY: string = "weeklyPlans_";
 
   getLocalStorage(key: string) {
     const storage = localStorage.getItem(key) ?? null;
@@ -170,7 +172,6 @@ export class StorageService {
 
     const newMeals = meals.filter(receta => receta.mealId !== idmeal);
 
-    console.log(meals);
     if (newMeals.length > 0) {
       localStorage.setItem(`${StorageService.USER_MEAL_KEY_ITEM}${user.id}`, JSON.stringify(newMeals));
     } else {
@@ -178,37 +179,69 @@ export class StorageService {
     }
   }
 
-  //TODO falta crear los accesos de week-plan
-// Ejemplo
-//  KEY: `${StorageService.USER_WEEKLYPALNS_KEY}${user.id}`
-//   [{
-//      "id": "2026-W02",
-//      "userId": 56,
-//      "days":
-//      [
-//       {"day": "lunes"},
-//       {"day": "martes"},
-//       {"day": "miércoles"},
-//       {"day": "jueves"},
-//       {"day": "viernes"},
-//       {"day": "sábado"},
-//       {"day": "domingo", "dinnerMealId": 52819}
-//     ]
-//   },{
-//     "id": "2026-W03",
-//      "userId": 56,
-//      "days":
-//      [
-//       {"day": "lunes", "lunchMealId": 52772, "dinnerMealId": 52819},
-//       {"day": "martes", "lunchMealId": 52944, "dinnerMealId": 53026},
-//       {"day": "miércoles"},
-//       {"day": "jueves"},
-//       {"day": "viernes"},
-//       {"day": "sábado"},
-//       {"day": "domingo"}
-//     ]
-//   }
-// ]
+  getWeeklyPlansUser(): WeeklyPlan[] {
+    const userId = this.getUserSession()?.id;
+    const userWeeklyPlans = this.getLocalStorage(`${StorageService.USER_WEEKLYPLANS_KEY}${userId}`) as WeeklyPlan[];
+    return (userWeeklyPlans as WeeklyPlan[]) ?? [];
+  }
+
+  setWeeklyPlanUser(weeklyPlanSave: WeeklyPlan[]): void {
+    const userId = this.getUserSession()?.id;
+    if (userId) {
+      localStorage.setItem(`${StorageService.USER_WEEKLYPLANS_KEY}${userId}`, JSON.stringify(weeklyPlanSave))
+    } else {
+      console.log("setWeeklyPlanUser no puede acceder a userID =>" + userId)
+    }
+  }
+
+  saveWeeklyPlan(planSave: WeeklyPlan): void {
+    const weeklyPlansByUser = this.getWeeklyPlansUser() as WeeklyPlan[];
+    const indice = weeklyPlansByUser.findIndex(plan => plan.id === planSave.id);
+    if (indice !== -1) {
+      weeklyPlansByUser[indice] = planSave;
+    } else {
+      weeklyPlansByUser.push(planSave);
+    }
+
+    this.setWeeklyPlanUser(weeklyPlansByUser);
+  }
+
+  deleteWeeklyPlan(planDelete: WeeklyPlan) {
+    const weeklyPlansByUser = this.getWeeklyPlansUser() as WeeklyPlan[];
+    const weeklyPlanNew = weeklyPlansByUser.filter(plan => plan.id !== planDelete.id);
+    this.setWeeklyPlanUser(weeklyPlanNew);
+  }
+
+  // Ejemplo
+  //  KEY: `${StorageService.USER_WEEKLYPALNS_KEY}${user.id}`
+  //   [{
+  //      "id": "2026-W02",
+  //      "userId": 56,
+  //      "days":
+  //      [
+  //       {"day": "lunes"},
+  //       {"day": "martes"},
+  //       {"day": "miércoles"},
+  //       {"day": "jueves"},
+  //       {"day": "viernes"},
+  //       {"day": "sábado"},
+  //       {"day": "domingo", "dinnerMealId": 52819}
+  //     ]
+  //   },{
+  //     "id": "2026-W03",
+  //      "userId": 56,
+  //      "days":
+  //      [
+  //       {"day": "lunes", "lunchMealId": 52772, "dinnerMealId": 52819},
+  //       {"day": "martes", "lunchMealId": 52944, "dinnerMealId": 53026},
+  //       {"day": "miércoles"},
+  //       {"day": "jueves"},
+  //       {"day": "viernes"},
+  //       {"day": "sábado"},
+  //       {"day": "domingo"}
+  //     ]
+  //   }
+  // ]
 
 
 }

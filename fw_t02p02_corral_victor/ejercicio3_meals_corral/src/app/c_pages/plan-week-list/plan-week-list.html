@@ -1,90 +1,76 @@
 <div class="card shadow-sm border-0" style="border-radius: 15px;">
-  <!-- Cabecera de la Tabla -->
+  <!-- Cabecera -->
   <div class="card-header bg-white border-0 pt-4 px-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-      <div>
-        <h3 class="h5 fw-bold text-primary mb-1">
-          <i class="bi bi-calendar3 me-2"></i>Planes Semanales Guardados
-        </h3>
-        <p class="text-muted small mb-0">Consulta y gestiona tu organización de comidas</p>
-      </div>
+      <h3 class="h5 fw-bold text-primary mb-0">Planes Semanales</h3>
 
-      <!-- Selector Estilizado -->
-      <div class="d-flex align-items-center gap-2">
-        <label class="small fw-bold text-secondary text-nowrap">Semana:</label>
-        <select class="form-select border-0 shadow-sm bg-light" style="width: 220px; border-radius: 10px;">
-          <option selected>W20 (Semana Actual)</option>
-          <option>W19 (Anterior)</option>
+      @if (plans().length > 0) {
+        <select class="form-select border-0 shadow-sm bg-light" style="width: 250px;"
+                (change)="onPlanChange($event)" [value]="planActivo()?.id">
+          @for (p of plans(); track p.id) {
+            <option [value]="p.id">{{ p.id }} {{ p.id === currentWeekId() ? '⭐' : '' }}</option>
+          }
         </select>
-      </div>
+      }
     </div>
   </div>
 
   <div class="card-body p-4">
-    <!-- Contenedor de Tabla con Scroll suave -->
-    <div class="table-responsive rounded-3 border">
-      <table class="table table-bordered align-middle text-center mb-0 plan-table">
-        <!-- Cabecera de días -->
-        <thead class="bg-light">
-          <tr>
-            <th colspan="7" class="py-3 fw-bold text-dark border-bottom-0">
-               Semana W20
-            </th>
-          </tr>
-          <tr class="text-secondary small uppercase">
-            <th class="py-2 border-top-0">Lunes</th>
-            <th class="py-2 border-top-0">Martes</th>
-            <th class="py-2 border-top-0">Miércoles</th>
-            <th class="py-2 border-top-0">Jueves</th>
-            <th class="py-2 border-top-0">Viernes</th>
-            <th class="py-2 border-top-0">Sábado</th>
-            <th class="py-2 border-top-0">Domingo</th>
-          </tr>
-        </thead>
+    @if (planActivo(); as plan) {
+      <div class="table-responsive rounded-3 border">
+        <table class="table table-bordered align-middle text-center mb-0">
+          <thead class="bg-light">
+            <tr><th colspan="7" class="py-3 fw-bold text-uppercase">Plan: {{ plan.id }}</th></tr>
+            <tr class="text-secondary small uppercase">
+              @for (d of plan.days; track d.day) {
+                <th class="py-2">{{ d.day }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Fila COMIDA -->
+            <tr>
+              @for (d of plan.days; track d.day) {
+                <td class="p-2" style="width: 14.2%;">
+                  <small class="text-uppercase fw-bold text-muted d-block mb-1" style="font-size: 0.6rem;">Mañana</small>
+                  @if (d.lunchMeal; as meal) {
+                    <div class="recipe-card p-1">
+                      <img [src]="meal.strMealThumb + '/preview'" class="img-fluid rounded mb-1 shadow-sm">
+                      <a [routerLink]="['/meal-details', meal.idMeal]" class="meal-title">{{ meal.strMeal }}</a>
+                    </div>
+                  } @else {
+                    <div class="py-3 border border-dashed rounded text-muted small">Libre</div>
+                  }
+                </td>
+              }
+            </tr>
+            <!-- Fila CENA -->
+            <tr>
+              @for (d of plan.days; track d.day) {
+                <td class="p-2">
+                  <small class="text-uppercase fw-bold text-muted d-block mb-1" style="font-size: 0.6rem;">Noche</small>
+                  @if (d.dinnerMeal; as meal) {
+                    <div class="recipe-card p-1">
+                      <img [src]="meal.strMealThumb + '/preview'" class="img-fluid rounded mb-1 shadow-sm">
+                      <a [routerLink]="['/meal-details', meal.idMeal]" class="meal-title">{{ meal.strMeal }}</a>
+                    </div>
+                  } @else {
+                    <div class="py-3 border border-dashed rounded text-muted small">Libre</div>
+                  }
+                </td>
+              }
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <tbody>
-          <!-- Fila Mañana -->
-          <tr>
-            <td>
-              <span class="d-block mb-2 fw-bold text-secondary small">Mañana</span>
-              <!-- Ejemplo de contenido si hubiera receta -->
-              <!-- <div class="placeholder-recipe p-2 rounded-3 border border-dashed text-muted small">
-                Sin receta
-              </div> -->
-            </td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Mañana</span></td>
-          </tr>
-
-          <!-- Fila Noche -->
-          <tr>
-            <td>
-              <span class="d-block mb-2 fw-bold text-secondary small">Noche</span>
-              <!-- <div class="placeholder-recipe p-2 rounded-3 border border-dashed text-muted small">
-                Sin receta
-              </div> -->
-            </td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-            <td class="py-4"><span class="text-light-emphasis small">Noche</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pie de tabla: Botones de acción -->
-    <div class="d-flex justify-content-end mt-4">
-      <button class="btn btn-outline-danger btn-sm px-4 d-flex align-items-center gap-2 shadow-sm" style="border-radius: 10px; font-weight: 600;">
-        <i class="bi bi-trash3"></i>
-        Borrar Plan Completo
-      </button>
-    </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button (click)="onDeleteCurrentPlan()" class="btn btn-outline-danger btn-sm">
+          <i class="bi bi-trash3 me-1"></i> Borrar Plan Completo
+        </button>
+      </div>
+    } @else {
+      <div class="text-center py-5 text-muted">No hay planes para mostrar.</div>
+    }
   </div>
 </div>
