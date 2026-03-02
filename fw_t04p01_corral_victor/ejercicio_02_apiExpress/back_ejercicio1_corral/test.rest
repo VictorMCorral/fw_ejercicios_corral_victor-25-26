@@ -1,0 +1,29 @@
+GET http://localhost:3000/api/characters
+
+###
+POST http://localhost:3000/api/characters
+Content-Type: application/json
+{
+    "name": "Rick Sanchez",
+    "img": "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+    "age": 70,
+    "species": "Human",
+    "specialTraits": ["Genius", "Alcoholic"],
+    "role": "Protagonist",
+    "firstAppearance": "Pilot"
+}
+
+###
+GET http://localhost:3000/api/characters/search?name=Rick
+###
+GET http://localhost:3000/api/characters/1
+###
+PUT http://localhost:3000/api/characters/1
+Content-Type: application/json
+{
+    "age": 71,
+    "specialTraits": ["Genius", "Alcoholic", "Cynical"]
+}   
+
+###
+DELETE http://localhost:3000/api/characters/1

@@ -1,0 +1,201 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlhNTRiYmU0NWRmZmY1NWFkM2U2MzJkIiwiaWF0IjoxNzcyNDQxMzMzLCJleHAiOjE3NzI0NDQ5MzN9.YRRK2BoYsXkXh33lcKetvnVk_QlnPFKRl3lWb_UK8_k
+### Obtener todos los productos (PÚBLICA)
+GET http://localhost:3032/api/products
+
+###
+
+### Crear producto (PRIVADA - requiere JWT)
+POST http://localhost:3032/api/products
+Content-Type: application/json
+Authorization: Bearer {{ token }}
+
+{
+  "name": "Teclado Mecánico",
+  "price": 59.99,
+  "stock": 10,
+  "department": "informatica"
+}
+
+###
+
+GET http://localhost:3032/api/auth/me
+Authorization: Bearer {{ token }}
+
+###
+…
+
+
+GET http://localhost:3032/api/auth/me
+
+###
+
+POST http://localhost:3032/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alumno2",
+  "email": "alumno2@fwshop.com",
+  "password": "1234"
+}
+
+###
+ 
+POST http://localhost:3032/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "alumno2",
+  "email": "alumno2@fwshop.com",
+  "password": "123456"
+}
+
+###
+
+POST http://localhost:3032/api/auth/login
+Content-Type: application/json
+
+
+{
+  "username": "alumno2",
+  "email": "alumno2@fwshop.com",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:3032/api/users
+Content-Type: application/json
+
+{
+  "username": "alumno1",
+  "email": "alumno1@fwshop.com",
+  "password": "1234"
+}
+
+
+###
+
+POST http://localhost:3032/api/users
+Content-Type: application/json
+
+{
+  "username": "alumno2",
+  "email": "alumno1@fwshop.com",
+  "password": "1234"
+}
+
+
+###
+
+
+POST http://localhost:3032/api/users/69a18c219b538125cf4a76db/cart
+Content-Type: application/json
+
+{
+  "productId": "69a012957abf1dae32a41d69"
+}
+
+
+###
+
+GET http://localhost:3032/api/users
+
+###
+
+GET http://localhost:3032/api/users/by-email/alumno1@fwshop.com
+
+###
+
+DELETE http://localhost:3000/api/users/PEGA_ID_USER/cart
+Content-Type: application/json
+
+{
+  "productId": "PEGA_ID_PRODUCT"
+}
+
+###
+
+DELETE http://localhost:3000/api/users/PEGA_ID_USER/cart/all
+
+###
+
+
+GET http://localhost:3000/api/products
+
+###
+
+GET http://localhost:3000/api/products/69a01f62743602511851e21f
+
+###
+
+GET http://localhost:3000/api/products/search?department=iot&available=true
+###
+
+GET http://localhost:3000/api/products/search?department=informatica&available=true
+
+###
+
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+  "name": "Sensor de temperatura WiFi",
+  "description": "Sensor IoT compatible con MQTT para monitorización remota",
+  "price": 39.95,
+  "stock": 120,
+  "department": "iot",
+  "available": true
+}
+
+###
+
+PUT http://localhost:3000/api/products/69a01f62743602511851e21f
+Content-Type: application/json
+
+{
+  "price": 79.99,
+  "stock": 10
+}
+
+
+###
+
+DELETE http://localhost:3000/api/products/69a01f62743602511851e21f
+
+###
+
+
+
+POST http://localhost:3000/api/places
+Content-Type: application/json
+
+{
+  "name": "Ciudad Real"
+}
+
+
+
+GET http://127.0.0.1:3000/api/places/
+
+###
+
+POST http://localhost:3000/api/places
+Content-Type: application/json
+
+{
+  "name": "Ciudad Real"
+}
+
+
+###
+
+PUT http://localhost:3000/api/places/1
+Content-Type: application/json
+
+{
+  "name": "Valdepeñas"
+}
+
+###
+
+DELETE http://localhost:3000/api/places/1
