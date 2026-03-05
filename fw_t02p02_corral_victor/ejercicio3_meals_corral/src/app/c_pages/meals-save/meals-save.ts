@@ -39,12 +39,11 @@ export class MealsSave {
       this.obtenerRecetasUser();
     }
   }
-
   async obtenerRecetasUser() {
     const user: User | null = this.storageService.getUserSession() as User;
     try {
       const userMeals: UserMeal[] = this.storageService.getUserMeals(user.id) as UserMeal[];
-      if (userMeals.length == 0) {
+      if (!userMeals || userMeals.length == 0) {
         this.cargando.set(false);
         return;
       }

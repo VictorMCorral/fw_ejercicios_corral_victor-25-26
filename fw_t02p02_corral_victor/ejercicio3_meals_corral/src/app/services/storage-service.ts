@@ -118,11 +118,15 @@ export class StorageService {
 
   saveUserMeals(meal: UserMeal) {
     console.log(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`);
-    const storage = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`) as UserMeal[];
-    const index = storage.findIndex(item => item.mealId === meal.mealId);
+    const storage = this.getLocalStorage(`${StorageService.USER_MEAL_KEY_ITEM}${meal.userId}`) as UserMeal[] ?? [];
 
-    if (index !== -1) {
-      storage[index] = meal;
+    if (storage.length > 0) {
+      const index = storage.findIndex(item => item.mealId === meal.mealId);
+      if (index !== -1) {
+        storage[index] = meal;
+      } else {
+        storage.push(meal);
+      }
     } else {
       storage.push(meal);
     }
