@@ -1,119 +1,64 @@
-const Product = require("../models/character.model");
+const Episodes = require("../models/episode.model");
 const mongoose = require("mongoose");
 
 //TODO todo esto hay que modificarlo a episodes
-const getAllProducts = async (req, res) => {
+exports.getAllEpisodes = async (req, res) => {
     try {
-        const products = await Product.find();
-        res.status(200).json(products);
+        const season = parseInt(req.query.season);
+        let filtro = {};
+        console.log("Season:", season);
+
+        if (season || !isNaN(season)) {
+            filtro = { code: { $regex: `S${season.toString().padStart(2, '0')}` } };
+        }
+
+        const episodes = await Episodes.find(filtro);
+
+        return res.status(200).json({
+            Episodes: episodes
+        });
     } catch (error) {
-        res.status(500).json({
-            error: "Error al obtener los productos",
+        console.error(error);
+        return res.status(500).json({
+            message: "Error al obtener los episodios",
+            error: error.message
         });
     }
 };
 
-const createProduct = async (req, res) => {
-    try {
-        const newProduct = await Product.create(req.body);
-        res.status(201).json(newProduct);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+exports.createEpisode = async (req, res) => {
+    // try {
+    //     const { name, img, age, species, specialTraits, role, firstAppearance } = req.body;
+    //     const newCharacter = new Character({
+    //         name,
+    //         img,
+    //         age,
+    //         species,
+    //         specialTraits: [
+    //             ...specialTraits
+    //         ],
+    //         role,
+    //         firstAppearance
+    //     });
+
+    //     await newCharacter.save();
+    //     res.status(201).json(newCharacter);
+    // } catch (error) {
+    //     res.status(500).json({
+    //         message: "Error al crear el personaje",
+    //         error: error.message
+    //     });
+    // }
 };
 
-const updateProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        const updated = await Product.findByIdAndUpdate(id, req.body, { returnDocument: 'after' });
-
-        res.status(200).json(updated);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        await Product.findByIdAndDelete(id);
-
-        res.status(200).json({ message: "Producto eliminado" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const getProductById = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // id inválido (no es ObjectId)
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ error: "ID inválido" });
-        }
-
-        const product = await Product.findById(id);
-
-        // No existe
-        if (!product) {
-            return res.status(404).json({ error: "Producto no encontrado" });
-        }
-
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const products = async () => { await Product.findByDepartment("informatica"); }
-
-const product = async () => {
-    await Product.findById(id);
-    if (!product) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-    }
-    
-    const disponible = product.isInStock();
-    
-    res.json({
-        name: product.name,
-        disponible: true
-    });
-    
+exports.getEpisodeById = async (req, res) => {
 }
 
-const searchProducts = async (req, res) => {
-    try {
-        //Parámetros que vienen en la URL:
-        const { department, available } = req.query;
+exports.updateEpisode = async (req, res) => {
 
-        const filter = {};
-
-        //Añadimos las condiciones al filtro
-        if (department) filter.department = department;
-        if (available !== undefined) filter.available = available === "true";
-        //Recuerda: En la URL todo llega como string
-
-        const results = await Product.find(filter);
-
-        res.status(200).json(results);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
 };
 
+exports.deleteEpisode = async (req, res) => {
 
-
-
-module.exports = {
-    getAllProducts,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    getProductById,
-    getProductById,
-    searchProducts
 };
+

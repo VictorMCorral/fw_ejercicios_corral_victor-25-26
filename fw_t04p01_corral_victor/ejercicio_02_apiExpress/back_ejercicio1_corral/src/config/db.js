@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 async function connectDB() {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-         //recuerda dotenv solo necesita ejecutarse una vez al arrancar la aplicación 
+        await mongoose.connect(process.env.MONGO_URI, {
+            dbName: process.env.DB_NAME
+        });
         console.log("MongoDB conectado correctamente");
     } catch (error) {
         console.error("Error conectando a MongoDB:", error.message);

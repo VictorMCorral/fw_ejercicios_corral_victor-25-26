@@ -1,35 +1,23 @@
 const { Schema, model } = require("mongoose");
 
 //TODO modificar a characters
-const productSchema = new Schema(
+const characterSchema = new Schema(
   {
     name: String,
-    description: String,
-    price: Number,
-    stock: Number,
-    department: String,
-    available: Boolean,
+    img: String,
+    age: Number,
+    species: String,
+    specialTraits: [String],
+    role: String,
+    firstAppearance: String,
   },
   {
-    timestamps: true,
-    versionKey: false,
+    collection: 'characters',
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    versionKey: false
   }
 );
 
-// Propiedad virtual
-productSchema.virtual("priceTaxes").get(function () {
-  return this.price * 1.21;
-});
 
-productSchema.statics.findByDepartment = function (department) {
-  return this.find({ department });
-};
-
-productSchema.methods.isInStock = function () {
-  return this.stock > 0;
-};
-
-
-module.exports = model("Product", productSchema);
+module.exports = model("Character", characterSchema);

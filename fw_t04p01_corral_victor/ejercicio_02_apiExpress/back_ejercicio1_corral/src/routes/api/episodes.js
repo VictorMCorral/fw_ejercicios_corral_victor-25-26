@@ -7,12 +7,12 @@ const router = require("express").Router();
 
 
 
-router.get("/api/episodes", episodesController.getEpisodes);
-router.post("/api/episodes", episodesController.createEpisode);
+router.get("/", episodesController.getAllEpisodes);
+router.post("/", episodesController.createEpisode);
 
-router.get("/api/episodes/:id", episodesController.getEpisodeById);
-router.put("/api/episodes/:id", episodesController.updateEpisode);
-router.delete("/api/episodes/:id", episodesController.deleteEpisode);
+router.get("/:id", episodesController.getEpisodeById);
+router.put("/:id", episodesController.updateEpisode);
+router.delete("/:id", episodesController.deleteEpisode);
 
 
 

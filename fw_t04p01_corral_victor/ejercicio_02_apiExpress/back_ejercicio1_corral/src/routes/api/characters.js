@@ -7,7 +7,7 @@ const router = require("express").Router();
 router.get("/", charactersController.getAllCharacters);
 router.post("/", charactersController.createCharacter);
 
-// router.get("/api/characters/:id", charactersController.getCharacterById);
+router.get("/:id", charactersController.getCharacterById);
 router.put("/:id", charactersController.updateCharacter);
 router.delete("/:id", charactersController.deleteCharacter);
 

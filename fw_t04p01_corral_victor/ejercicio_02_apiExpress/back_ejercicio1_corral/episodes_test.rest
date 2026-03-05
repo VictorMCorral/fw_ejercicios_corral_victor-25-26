@@ -1,0 +1,41 @@
+GET http://localhost:3000/api/episodes
+
+###
+GET http://localhost:3000/api/episodes?season=3
+
+###
+POST http://localhost:3000/api/characters
+Content-Type: application/json
+
+    {
+      "name": "Rexxar",
+      "img": "https://wow.zamimg.com/uploads/screenshots/normal/1202262-rexxar.jpg",
+      "age": 50,
+      "species": "Orco",
+      "specialTraits": [
+        "Bestia domada",
+        "Lanzamiento de hachas",
+        "Llamada de la bestia"
+      ],
+      "role": "Cazador",
+      "firstAppearance": "World of Warcraft: The Burning Crusade"
+    }
+
+###
+GET http://localhost:3000/api/characters/69a02b6a21dd4ffc04c140bc
+###
+
+PUT http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d
+Content-Type: application/json
+
+{
+    "age": 71,
+    "specialTraits": [
+        "Bestia domada",
+        "Lanzamiento de hachas",
+        "Trampas y Explosivos"
+        ]
+}   
+
+###
+DELETE http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d

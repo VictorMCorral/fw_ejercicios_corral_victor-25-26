@@ -2,23 +2,23 @@ const { Schema, model } = require("mongoose");
 
 
 //TODO modificar a episodes
-const userSchema = new Schema(
+const episodeSchema = new Schema(
     {
-        username: String,
-        email: {
-            type: String,
-            unique: true,
-            required: true,
-            trim: true,
-            lowercase: true
-        },
-        password: {
-            type: String,
-            required: true
-        },
-        cart: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+        code: String,
+        tittle: String,
+        sumary: String,
+        year: Number,
+        characters: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Character'
+        }]
     },
-    { timestamps: true, versionKey: false }
+    {
+        collection: 'episodes',
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+        versionKey: false
+    }
 );
 
-module.exports = model("User", userSchema);
+module.exports = model("Episode", episodeSchema);

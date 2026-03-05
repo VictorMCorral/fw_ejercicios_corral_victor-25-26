@@ -1,17 +1,24 @@
 const moongose = require("mongoose");
 const Character = require("../models/character.model");
-//TODO todo esto hay que modificarlo a characters
 
 exports.getAllCharacters = async (req, res) => {
-    console.log(req.query);
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 4;
+
+        const skip = (page - 1) * limit;
+
         const characters = await Character.find()
-            .skip((page - 1) * limit)
+            .skip(skip)
             .limit(limit);
-        return res.status(200).json(characters);
+
+        return res.status(200).json({
+            currentPage: page,
+            characters: characters
+        });
 
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             message: "Error al obtener los personajes",
             error: error.message
@@ -33,6 +40,7 @@ exports.createCharacter = async (req, res) => {
             role,
             firstAppearance
         });
+
         await newCharacter.save();
         res.status(201).json(newCharacter);
     } catch (error) {
@@ -42,6 +50,24 @@ exports.createCharacter = async (req, res) => {
         });
     }
 };
+
+exports.getCharacterById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const character = await Character.findById(id);
+        if (!character) {
+            return res.status(404).json({
+                message: "Personaje no encontrado"
+            });
+        }
+        res.status(200).json(character);
+    } catch (err){
+        res.status(500).json({
+            message: "Error al obtener el personaje",
+            error: err.message
+        });
+    }
+}
 
 exports.updateCharacter = async (req, res) => {
     const { id } = req.params;
