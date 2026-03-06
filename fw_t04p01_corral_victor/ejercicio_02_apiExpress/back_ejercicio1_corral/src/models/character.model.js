@@ -1,6 +1,5 @@
 const { Schema, model } = require("mongoose");
 
-//TODO modificar a characters
 const characterSchema = new Schema(
   {
     name: String,
@@ -13,8 +12,6 @@ const characterSchema = new Schema(
   },
   {
     collection: 'characters',
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
     versionKey: false
   }
 );

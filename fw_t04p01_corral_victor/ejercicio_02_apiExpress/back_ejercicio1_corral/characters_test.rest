@@ -1,11 +1,16 @@
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlhYWMyMDliOWQ2YmJhY2U1YjRlMGUxIiwiaWF0IjoxNzcyNzk4NTA1LCJleHAiOjE3NzM2NjI1MDV9.Hv8kTigJEs6BZd0Q8uRWOLUrp__FMvADjU1idRqzW7w
+
 GET http://localhost:3000/api/characters
+Authorization: Bearer {{ token }}
 
 ###
 GET http://localhost:3000/api/characters?page=3&limit=4
+Authorization: Bearer {{ token }}
 
 ###
 POST http://localhost:3000/api/characters
 Content-Type: application/json
+Authorization: Bearer {{ token }}
 
     {
       "name": "Rexxar",
@@ -23,10 +28,13 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/api/characters/69a02b6a21dd4ffc04c140bc
+Authorization: Bearer {{ token }}
+
 ###
 
-PUT http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d
+PUT http://localhost:3000/api/characters/69aac2ebb9d6bbace5b4e0fa
 Content-Type: application/json
+Authorization: Bearer {{ token }}
 
 {
     "age": 71,
@@ -38,4 +46,5 @@ Content-Type: application/json
 }   
 
 ###
-DELETE http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d
+DELETE http://localhost:3000/api/characters/69aac297b9d6bbace5b4e0ee
+Authorization: Bearer {{ token }}

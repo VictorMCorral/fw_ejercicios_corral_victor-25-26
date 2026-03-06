@@ -1,12 +1,10 @@
 const { Schema, model } = require("mongoose");
 
-
-//TODO modificar a episodes
 const episodeSchema = new Schema(
     {
         code: String,
-        tittle: String,
-        sumary: String,
+        title: String,
+        summary: String,
         year: Number,
         characters: [{
             type: Schema.Types.ObjectId,
@@ -15,8 +13,6 @@ const episodeSchema = new Schema(
     },
     {
         collection: 'episodes',
-        toJSON: { virtuals: true },
-        toObject: { virtuals: true },
         versionKey: false
     }
 );

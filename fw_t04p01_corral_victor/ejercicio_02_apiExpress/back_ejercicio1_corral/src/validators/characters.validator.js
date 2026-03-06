@@ -1,28 +1,69 @@
 const { body, validationResult } = require('express-validator');
 
-//TODO modificar esto a characters
-// Reglas para crear un producto
-const createProductRules = [
+// Reglas para crear un personaje
+const createCharacterRules = [
     body('name')
         .notEmpty().withMessage('El nombre es obligatorio')
         .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
 
-    body('price')
-        .notEmpty().withMessage('El precio es obligatorio')
-        .isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
+    body('img')
+        .notEmpty().withMessage('La imagen es obligatoria')
+        .isURL().withMessage('Debe ser una URL válida') //verifica que sea una URL
+        .matches(/\.(jpeg|jpg|gif|png|webp|svg)$/i) // Verifica que la URL termine con una extensión de imagen válida
+        .withMessage('La URL debe ser de una imagen válida (jpg, png, gif, webp, svg)'),
 
-    body('stock')
-        .notEmpty().withMessage('El stock es obligatorio')
-        .isInt({ min: 0 }).withMessage('El stock debe ser un entero positivo'),
+    body('age')
+        .notEmpty().withMessage('La edad es obligatoria')
+        .isInt({ min: 0 }).withMessage('La edad debe ser un número positivo'),
 
-    body('department')
-        .notEmpty().withMessage('El departamento es obligatorio')
-        .isIn(['informatica', 'iot', 'electronica'])
-        .withMessage('Departamento no válido'),
+    body('species')
+        .notEmpty().withMessage('La especie es obligatoria')
+        .isString().withMessage('La especie debe ser un texto')
+        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
 
-    body('available')
+    body('role')
+        .notEmpty().withMessage('El rol es obligatorio')
+        .isString().withMessage('El rol debe ser un texto')
+        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
+
+    body('specialTraits')
+        .notEmpty().withMessage('Los rasgos especiales son obligatorios')
+        .isArray({ min: 1, max: 3 }).withMessage('Los rasgos especiales deben ser un array de entre 1 y 3 elementos'),
+];
+const updateCharacterRules = [
+    body('name')
         .optional()
-        .isBoolean().withMessage('available debe ser true o false'),
+        .notEmpty().withMessage('El nombre es obligatorio')
+        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
+
+    body('img')
+        .optional()
+        .notEmpty().withMessage('La imagen es obligatoria')
+        .isURL().withMessage('Debe ser una URL válida') //verifica que sea una URL
+        .matches(/\.(jpeg|jpg|gif|png|webp|svg)$/i) // Verifica que la URL termine con una extensión de imagen válida
+        .withMessage('La URL debe ser de una imagen válida (jpg, png, gif, webp, svg)'),
+
+    body('age')
+        .optional()
+        .notEmpty().withMessage('La edad es obligatoria')
+        .isInt({ min: 0 }).withMessage('La edad debe ser un número positivo'),
+
+    body('species')
+        .optional()
+        .notEmpty().withMessage('La especie es obligatoria')
+        .isString().withMessage('La especie debe ser un texto')
+        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
+
+    body('role')
+        .optional()
+        .notEmpty().withMessage('El rol es obligatorio')
+        .isString().withMessage('El rol debe ser un texto')
+        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
+
+    body('specialTraits')
+        .optional()
+        .notEmpty().withMessage('Los rasgos especiales son obligatorios')
+        .isArray({ min: 1, max: 3 }).withMessage('Los rasgos especiales deben ser un array de entre 1 y 3 elementos'),
 ];
 
 // Middleware que comprueba si hubo errores
@@ -34,4 +75,4 @@ const validate = (req, res, next) => {
     next();
 };
 
-module.exports = { createProductRules, validate };
+module.exports = { createCharacterRules, updateCharacterRules, validate };

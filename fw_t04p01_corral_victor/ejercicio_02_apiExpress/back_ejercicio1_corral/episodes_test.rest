@@ -1,41 +1,48 @@
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlhYWMyMDliOWQ2YmJhY2U1YjRlMGUxIiwiaWF0IjoxNzcyNzk4NTA1LCJleHAiOjE3NzM2NjI1MDV9.Hv8kTigJEs6BZd0Q8uRWOLUrp__FMvADjU1idRqzW7w
+
 GET http://localhost:3000/api/episodes
+Authorization: Bearer {{ token }}
 
 ###
 GET http://localhost:3000/api/episodes?season=3
+Authorization: Bearer {{ token }}
 
 ###
-POST http://localhost:3000/api/characters
+POST http://localhost:3000/api/episodes
 Content-Type: application/json
+Authorization: Bearer {{ token }}
 
     {
-      "name": "Rexxar",
-      "img": "https://wow.zamimg.com/uploads/screenshots/normal/1202262-rexxar.jpg",
-      "age": 50,
-      "species": "Orco",
-      "specialTraits": [
-        "Bestia domada",
-        "Lanzamiento de hachas",
-        "Llamada de la bestia"
-      ],
-      "role": "Cazador",
-      "firstAppearance": "World of Warcraft: The Burning Crusade"
+      "code": "S03E06",
+      "title": "El rey Exánime",
+      "summary": "El rey Exánime, el señor de los no-muertos, se enfrenta a los héroes en una batalla épica por el destino de Azeroth.",
+      "year": 2006,
+      "characters": [
+        "69a02b6a21dd4ffc04c140be",
+        "69a02b6a21dd4ffc04c140c0",
+        "69a02b6a21dd4ffc04c140bf"
+      ]
     }
 
 ###
-GET http://localhost:3000/api/characters/69a02b6a21dd4ffc04c140bc
+GET http://localhost:3000/api/episodes/69aaa50687dfa93c0680cf76
+Authorization: Bearer {{ token }}
 ###
 
-PUT http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d
+PUT http://localhost:3000/api/episodes/69aac4f97dbf55004e4b8388
 Content-Type: application/json
+Authorization: Bearer {{ token }}
 
-{
-    "age": 71,
-    "specialTraits": [
-        "Bestia domada",
-        "Lanzamiento de hachas",
-        "Trampas y Explosivos"
-        ]
-}   
+    {
+      "code": "S03E06",
+      "title": "El rey Lich",
+      "characters": [
+        "69a02b6a21dd4ffc04c140be",
+        "69a02b6a21dd4ffc04c140c1",
+        "69a02b6a21dd4ffc04c140bf"
+      ]
+    } 
 
 ###
-DELETE http://localhost:3000/api/characters/69a940026d69cdf3ab9d004d
+DELETE http://localhost:3000/api/episodes/69aaa50687dfa93c0680cf76
+Authorization: Bearer {{ token }}

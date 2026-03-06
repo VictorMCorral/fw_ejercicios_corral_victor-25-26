@@ -1,28 +1,40 @@
 const { body, validationResult } = require('express-validator');
 
-//TODO modificar esto a episodes
 
-const createProductRules = [
-    body('name')
-        .notEmpty().withMessage('El nombre es obligatorio')
-        .isLength({ min: 2, max: 100 }).withMessage('Entre 2 y 100 caracteres'),
+const createEpisodesRules = [
+    body('code')
+        .notEmpty().withMessage('El código es obligatorio')
+        .matches(/^S\d{2}E\d{2}$/)
+        .withMessage('El formato debe ser SxxExx (ejemplo: S01E05)'),
+    body('year')
+        .notEmpty().withMessage('El año es obligatorio')
+        .isInt({ min: 1900, max: new Date().getFullYear() + 1 }).withMessage('El año debe ser un número válido'),
 
-    body('price')
-        .notEmpty().withMessage('El precio es obligatorio')
-        .isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
+    body('characters')
+        .notEmpty().withMessage('El campo characters es obligatorio')
+        .isArray({ min: 1, max: 3 }).withMessage('Debe ser un array de entre 1 y 3 personajes'),
 
-    body('stock')
-        .notEmpty().withMessage('El stock es obligatorio')
-        .isInt({ min: 0 }).withMessage('El stock debe ser un entero positivo'),
-
-    body('department')
-        .notEmpty().withMessage('El departamento es obligatorio')
-        .isIn(['informatica', 'iot', 'electronica'])
-        .withMessage('Departamento no válido'),
-
-    body('available')
+    body('characters.*')
+        .isMongoId().withMessage('Cada personaje debe ser un ID de MongoDB válido (ObjectId)'),
+];
+const updateEpisodesRules = [
+    body('code')
         .optional()
-        .isBoolean().withMessage('available debe ser true o false'),
+        .notEmpty().withMessage('El código es obligatorio')
+        .matches(/^S\d{2}E\d{2}$/)
+        .withMessage('El formato debe ser SxxExx (ejemplo: S01E05)'),
+    body('year')
+        .optional()
+        .notEmpty().withMessage('El año es obligatorio')
+        .isInt({ min: 1900, max: new Date().getFullYear() + 1 }).withMessage('El año debe ser un número válido'),
+
+    body('characters')
+        .optional()
+        .notEmpty().withMessage('El campo characters es obligatorio')
+        .isArray({ min: 1, max: 3 }).withMessage('Debe ser un array de entre 1 y 3 personajes'),
+
+    body('characters.*')
+        .isMongoId().withMessage('Cada personaje debe ser un ID de MongoDB válido (ObjectId)'),
 ];
 
 // Middleware que comprueba si hubo errores
@@ -34,4 +46,4 @@ const validate = (req, res, next) => {
     next();
 };
 
-module.exports = { createProductRules, validate };
+module.exports = { createEpisodesRules, updateEpisodesRules, validate };

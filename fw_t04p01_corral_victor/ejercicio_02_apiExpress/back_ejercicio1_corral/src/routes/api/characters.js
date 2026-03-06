@@ -1,14 +1,13 @@
 const charactersController = require("../../controllers/characters.controller");
 const router = require("express").Router();
+const { createCharacterRules, updateCharacterRules, validate } = require("../../validators/characters.validator");
 
-//TODO hacer que /api/characters filtre /api/characters?page=1&limit=4;
-//TODO meter autenticación para crear, actualizar y eliminar personajes (POST, PUT, DELETE)
 
 router.get("/", charactersController.getAllCharacters);
-router.post("/", charactersController.createCharacter);
+router.post("/", [createCharacterRules, validate], charactersController.createCharacter);
 
 router.get("/:id", charactersController.getCharacterById);
-router.put("/:id", charactersController.updateCharacter);
+router.put("/:id", [updateCharacterRules, validate], charactersController.updateCharacter);
 router.delete("/:id", charactersController.deleteCharacter);
 
 
